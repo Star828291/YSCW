@@ -1597,9 +1597,9 @@
             bgError.textContent = '';
             
             // 检查文件大小（最大5MB）
-            const maxSize = 5 * 1024 * 1024; // 2MB
+            const maxSize = 4 * 1024 * 1024; // 4MB
             if (file.size > maxSize) {
-                bgError.textContent = '图片过大，请选择小于5MB的文件';
+                bgError.textContent = '图片过大，请选择小于4MB的文件';
                 bgError.style.display = 'block';
                 return;
             }
