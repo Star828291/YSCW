@@ -121,11 +121,18 @@
             margin-top: 4px;
         }
         
-        /* 输入区域 - 添加模糊效果 */
-        .mobile-input-area {
+        /* 输入区域和工具栏容器 - 合并为一个统一区域 */
+        .mobile-input-toolbar-container {
             background: var(--blur-bg);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 输入区域 */
+        .mobile-input-area {
             padding: 10px;
             display: flex;
             flex-direction: column;
@@ -171,13 +178,10 @@
             font-size: 18px;
         }
         
-        /* 底部工具栏 - 添加模糊效果（与输入区域统一） */
+        /* 底部工具栏 */
         .mobile-toolbar {
             display: flex;
             justify-content: space-between;
-            background: var(--blur-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             padding: 8px 15px;
         }
         
@@ -286,10 +290,10 @@
             margin-top: 5px;
         }
         
-        /* 美化按钮 - 圆角减小，宽度自适应 */
+        /* 美化按钮 */
         .mobile-card-btn {
             padding: 10px 12px;
-            border-radius: 12px; /* 圆角适当减小 */
+            border-radius: 12px;
             border: none;
             font-weight: bold;
             font-size: 0.85rem;
@@ -297,9 +301,9 @@
             cursor: pointer;
             transition: all 0.2s ease;
             outline: none;
-            flex: 1; /* 按钮宽度自适应 */
-            max-width: 150px; /* 最大宽度限制 */
-            min-width: 80px; /* 最小宽度限制 */
+            flex: 1;
+            max-width: 150px;
+            min-width: 80px;
             text-align: center;
         }
         
@@ -471,12 +475,7 @@
             }
         }
         
-        /* 统一输入区域和工具栏的容器 */
-        .mobile-input-toolbar-container {
-            border-top: 1px solid var(--border-color);
-        }
-
-        /* 新增样式：顶部标题栏 */
+        /* 顶部标题栏 - 位置下移 */
         .mobile-title-display {
             text-align: center;
             padding: 12px;
@@ -484,17 +483,36 @@
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             border-bottom: 1px solid var(--border-color);
-            font-size: 1.2rem; /* 增大字号 */
+            font-size: 1.2rem;
             font-weight: bold;
+            margin-bottom: 5px; /* 增加下边距下移位置 */
         }
 
-        /* 新增样式：用户名显示在输入区域上方 */
+        /* 用户名显示在输入区域上方 */
         .mobile-user-display-container {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 8px;
             margin-bottom: 8px;
+        }
+        
+        /* 工具栏位置微调 */
+        .mobile-toolbar {
+            margin-top: -5px; /* 上移工具栏 */
+        }
+        
+        /* 输入栏焦点状态样式 */
+        .input-focused .mobile-messages {
+            padding-bottom: 60px; /* 为输入栏腾出空间 */
+        }
+        
+        .input-focused .mobile-input-toolbar-container {
+            position: fixed;
+            top: 52px; /* 在标题栏下方 */
+            left: 0;
+            right: 0;
+            z-index: 50;
         }
     </style>
 </head>
@@ -664,7 +682,7 @@
         let mobileStatusText = document.getElementById('mobileStatusText');
         let mobileUserList = document.getElementById('mobileUserList');
         let mobileOnlineCount = document.getElementById('mobileOnlineCount');
-        let mobileCurrentUsername = document.getElementById('mobileCurrentUsername'); // 更新为新的元素
+        let mobileCurrentUsername = document.getElementById('mobileCurrentUsername');
         let loginOverlay = document.getElementById('loginOverlay');
         let wechatLogin = document.getElementById('wechatLogin');
         let guestLogin = document.getElementById('guestLogin');
@@ -702,6 +720,19 @@
             // 设置发送消息事件
             mobileSendBtn.addEventListener('click', sendMessage);
             mobileMessageInput.addEventListener('keydown', handleKeyDown);
+            
+            // 设置输入框焦点事件
+            mobileMessageInput.addEventListener('focus', () => {
+                document.body.classList.add('input-focused');
+                // 滚动到底部确保消息可见
+                setTimeout(() => {
+                    mobileMessages.scrollTop = mobileMessages.scrollHeight;
+                }, 100);
+            });
+            
+            mobileMessageInput.addEventListener('blur', () => {
+                document.body.classList.remove('input-focused');
+            });
             
             // 设置更改昵称事件
             mobileChangeNicknameBtn.addEventListener('click', showNicknameForm);
@@ -789,7 +820,7 @@
             currentUser.avatar = name.charAt(0).toUpperCase();
             
             // 更新界面显示
-            mobileCurrentUsername.textContent = name; // 更新新的用户名显示元素
+            mobileCurrentUsername.textContent = name;
             loginAvatar.textContent = currentUser.avatar;
             
             // 添加系统消息
@@ -833,19 +864,19 @@
         function login(user) {
             currentUser = user;
             loginAvatar.textContent = user.avatar;
-            mobileCurrentUsername.textContent = user.name; // 更新新的用户名显示元素
+            mobileCurrentUsername.textContent = user.name;
             loginOverlay.style.display = 'none';
             
             // 启用消息输入
             mobileMessageInput.disabled = false;
             mobileSendBtn.disabled = false;
             
-            // 登录后检查WebSocket连接状态
-            if (!websocket || websocket.readyState !== WebSocket.OPEN) {
-                // 未连接服务器，显示连接状态卡片
-                mobileStatusCard.style.display = 'block';
-                addMessageToDisplay('system', '系统', '请点击下方“状态”，连接服务器开始聊天');
-            }
+            // 登录后直接显示连接状态卡片
+            mobileStatusCard.style.display = 'block';
+            mobileServerAddress.focus(); // 自动聚焦到服务器地址输入框
+            
+            // 更新系统消息
+            addMessageToDisplay('system', '系统', `欢迎 ${user.name}，请连接服务器开始聊天`);
         }
         
         // 连接WebSocket
