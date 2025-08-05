@@ -126,10 +126,11 @@
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             padding: 10px;
-            border-top: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             gap: 10px;
+            /* 移除上边框 */
+            border-top: none;
         }
         
         .mobile-input-row {
@@ -185,7 +186,8 @@
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             padding: 8px 15px;
-            border-top: 1px solid var(--border-color);
+            /* 移除上边框 */
+            border-top: none;
         }
         
         .mobile-toolbar button {
@@ -463,6 +465,8 @@
             justify-content: center;
             align-items: center;
             gap: 8px;
+            /* 添加顶部内边距避免被手机状态栏遮挡 */
+            padding-top: 30px;
         }
         
         .mobile-change-nickname-btn {
@@ -749,6 +753,29 @@
             mobileCancelSettingsBtn.addEventListener('click', cancelSettings);
             mobileResetSettingsBtn.addEventListener('click', resetSettings);
             mobileBgImageInput.addEventListener('change', handleBackgroundImage);
+            
+            // 添加键盘事件监听器
+            setupKeyboardListeners();
+        }
+        
+        // 添加键盘事件监听器
+        function setupKeyboardListeners() {
+            // 当输入框获得焦点时（键盘弹出）
+            mobileMessageInput.addEventListener('focus', () => {
+                // 延迟滚动确保输入框在视图中
+                setTimeout(() => {
+                    mobileMessageInput.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }, 300);
+            });
+            
+            // 当窗口大小变化时（键盘弹出/收起）
+            window.addEventListener('resize', () => {
+                // 如果输入框有焦点（键盘弹出状态）
+                if (document.activeElement === mobileMessageInput) {
+                    // 滚动到输入框位置
+                    mobileMessageInput.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }
+            });
         }
         
         // 加载保存的背景图片
