@@ -57,6 +57,7 @@
             height: 100vh;
             width: 100%;
             padding: 0;
+            position: relative;
         }
         
         /* 消息显示区域 */
@@ -132,6 +133,11 @@
             border-top: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            transition: bottom 0.3s ease;
         }
         
         /* 输入区域 */
@@ -238,6 +244,7 @@
             padding-bottom: 12px;
             margin-bottom: 12px;
             border-bottom: 1px solid var(--border-color);
+            position: relative;
         }
         
         .mobile-status-header h2 {
@@ -531,6 +538,7 @@
             gap: 10px;
             margin-bottom: 8px;
             font-size: 0.95rem;
+            position: relative;
         }
         
         .mobile-change-nickname-btn {
@@ -614,6 +622,59 @@
         #mobileAboutText p {
             margin-bottom: 8px;
         }
+        
+        /* 拖动手柄样式 */
+        .drag-handle {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 20px;
+            background: rgba(60, 60, 60, 0.7);
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: ns-resize;
+            touch-action: none;
+            z-index: 10;
+        }
+        
+        .drag-handle i {
+            color: #aaa;
+            font-size: 14px;
+        }
+        
+        .drag-handle:active {
+            background: var(--primary-color);
+        }
+        
+        .drag-handle:active i {
+            color: white;
+        }
+        
+        /* 卡片顶部关闭按钮容器 */
+        .mobile-card-close-container {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 102;
+        }
+        
+        .mobile-card-close-container .mobile-card-close {
+            background: var(--primary-color);
+            color: white;
+            width: 35px;
+            height: 35px;
+            top: 0;
+            right: 0;
+        }
+        
+        .mobile-card-close-container .mobile-card-close:hover {
+            background: #06a850;
+        }
     </style>
 </head>
 <body>
@@ -652,7 +713,12 @@
         </div>
         
         <!-- 输入区域和工具栏容器 -->
-        <div class="mobile-input-toolbar-container">
+        <div class="mobile-input-toolbar-container" id="inputContainer">
+            <!-- 拖动手柄 -->
+            <div class="drag-handle" id="dragHandle">
+                <i class="fas fa-grip-lines"></i>
+            </div>
+            
             <!-- 输入区域 -->
             <div class="mobile-input-area">
                 <!-- 用户名显示在输入区域上方 -->
@@ -685,9 +751,13 @@
     
     <!-- 连接状态卡片 (手机版) -->
     <div class="mobile-status-card" id="mobileStatusCard">
-        <button class="mobile-card-close" id="closeStatusCard">
-            <i class="fas fa-times"></i>
-        </button>
+        <!-- 顶部居中关闭按钮 -->
+        <div class="mobile-card-close-container">
+            <button class="mobile-card-close" id="closeStatusCard">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
         <div class="mobile-status-header">
             <h2>连接状态</h2>
             <div class="mobile-status-indicator">
@@ -726,9 +796,13 @@
     
     <!-- 设置卡片 -->
     <div class="mobile-status-card" id="mobileSettingsCard">
-        <button class="mobile-card-close" id="closeSettingsCard">
-            <i class="fas fa-times"></i>
-        </button>
+        <!-- 顶部居中关闭按钮 -->
+        <div class="mobile-card-close-container">
+            <button class="mobile-card-close" id="closeSettingsCard">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
         <div class="mobile-status-header">
             <h2>设置</h2>
         </div>
@@ -749,9 +823,13 @@
     
     <!-- 关于卡片 -->
     <div class="mobile-status-card" id="mobileAboutCard">
-        <button class="mobile-card-close" id="closeAboutCard">
-            <i class="fas fa-times"></i>
-        </button>
+        <!-- 顶部居中关闭按钮 -->
+        <div class="mobile-card-close-container">
+            <button class="mobile-card-close" id="closeAboutCard">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
         <div class="mobile-status-header">
             <h2>关于</h2>
         </div>
@@ -813,11 +891,19 @@
         let closeStatusCard = document.getElementById('closeStatusCard');
         let closeSettingsCard = document.getElementById('closeSettingsCard');
         let closeAboutCard = document.getElementById('closeAboutCard');
+        let dragHandle = document.getElementById('dragHandle');
+        let inputContainer = document.getElementById('inputContainer');
         
         // 初始化页面
         function initMobilePage() {
             // 加载保存的背景图片
             loadBackgroundImage();
+            
+            // 加载输入栏位置
+            loadInputPosition();
+            
+            // 设置拖动手柄事件
+            setupDragHandle();
             
             // 设置登录事件
             wechatLogin.addEventListener('click', handleWechatLogin);
@@ -854,6 +940,77 @@
             mobileCancelSettingsBtn.addEventListener('click', cancelSettings);
             mobileResetSettingsBtn.addEventListener('click', resetSettings);
             mobileBgImageInput.addEventListener('change', handleBackgroundImage);
+        }
+        
+        // 设置拖动手柄功能
+        function setupDragHandle() {
+            let startY, startBottom;
+            
+            // 触摸事件处理
+            dragHandle.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                startY = e.touches[0].clientY;
+                startBottom = parseInt(getComputedStyle(inputContainer).bottom);
+            });
+            
+            dragHandle.addEventListener('touchmove', function(e) {
+                e.preventDefault();
+                if (startY === undefined) return;
+                
+                const deltaY = startY - e.touches[0].clientY;
+                const newBottom = startBottom + deltaY;
+                
+                // 限制输入栏移动范围 (20px - 屏幕高度的一半)
+                if (newBottom >= 20 && newBottom <= window.innerHeight / 2) {
+                    inputContainer.style.bottom = newBottom + 'px';
+                }
+            });
+            
+            dragHandle.addEventListener('touchend', function() {
+                saveInputPosition();
+            });
+            
+            // 鼠标事件处理（用于桌面测试）
+            dragHandle.addEventListener('mousedown', function(e) {
+                e.preventDefault();
+                startY = e.clientY;
+                startBottom = parseInt(getComputedStyle(inputContainer).bottom);
+                
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', handleMouseUp);
+            });
+            
+            function handleMouseMove(e) {
+                if (startY === undefined) return;
+                
+                const deltaY = startY - e.clientY;
+                const newBottom = startBottom + deltaY;
+                
+                // 限制输入栏移动范围
+                if (newBottom >= 20 && newBottom <= window.innerHeight / 2) {
+                    inputContainer.style.bottom = newBottom + 'px';
+                }
+            }
+            
+            function handleMouseUp() {
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+                saveInputPosition();
+            }
+        }
+        
+        // 保存输入栏位置
+        function saveInputPosition() {
+            const bottom = parseInt(getComputedStyle(inputContainer).bottom);
+            localStorage.setItem('inputPosition', bottom);
+        }
+        
+        // 加载输入栏位置
+        function loadInputPosition() {
+            const savedPosition = localStorage.getItem('inputPosition');
+            if (savedPosition) {
+                inputContainer.style.bottom = savedPosition + 'px';
+            }
         }
         
         // 切换卡片显示状态
