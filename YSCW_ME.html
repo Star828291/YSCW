@@ -69,6 +69,7 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
+            transition: height 0.3s ease;
         }
         
         .mobile-message {
@@ -138,6 +139,7 @@
             left: 0;
             right: 0;
             transition: bottom 0.3s ease;
+            z-index: 50;
         }
         
         /* 输入区域 */
@@ -528,6 +530,8 @@
             justify-content: center;
             align-items: center;
             box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 10;
         }
 
         /* 用户名显示在输入区域上方 */
@@ -675,6 +679,29 @@
         .mobile-card-close-container .mobile-card-close:hover {
             background: #06a850;
         }
+        
+        /* 新添加：输入区域拖动提示 */
+        .drag-hint {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            z-index: 1000;
+            animation: fadeInOut 3s forwards;
+            display: none;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; bottom: 0; }
+            20% { opacity: 1; bottom: 10px; }
+            80% { opacity: 1; bottom: 10px; }
+            100% { opacity: 0; bottom: 0; }
+        }
     </style>
 </head>
 <body>
@@ -709,6 +736,9 @@
         <div class="mobile-messages" id="mobileMessages">
             <div class="mobile-message mobile-system-message">
                 <div class="mobile-message-content">欢迎使用Y.Server Chat ME！请先连接服务器</div>
+            </div>
+            <div class="mobile-message mobile-system-message">
+                <div class="mobile-message-content">提示：向下拖动输入栏可查看更多历史消息</div>
             </div>
         </div>
         
@@ -838,7 +868,7 @@
             <div id="mobileAboutText">
                 <p><strong>YSCW - Y.Server Client Mobile Edition</strong></p>
                 <p>-----------------</p>
-                <p>版本：1.0 [M2508U1]</p>
+                <p>版本：1.1 [M2508U2]</p>
                 <p>由 YQP 构建</p>
                 <p>-----------------</p>
                 <p>鸣谢：</p>
@@ -855,6 +885,9 @@
             </div>
         </div>
     </div>
+    
+    <!-- 拖动提示 -->
+    <div class="drag-hint" id="dragHint">拖动输入栏可查看更多历史消息</div>
 
     <script>
         // 全局变量
@@ -893,6 +926,7 @@
         let closeAboutCard = document.getElementById('closeAboutCard');
         let dragHandle = document.getElementById('dragHandle');
         let inputContainer = document.getElementById('inputContainer');
+        let dragHint = document.getElementById('dragHint');
         
         // 初始化页面
         function initMobilePage() {
@@ -940,34 +974,51 @@
             mobileCancelSettingsBtn.addEventListener('click', cancelSettings);
             mobileResetSettingsBtn.addEventListener('click', resetSettings);
             mobileBgImageInput.addEventListener('change', handleBackgroundImage);
+            
+            // 显示拖动提示
+            setTimeout(() => {
+                dragHint.style.display = 'block';
+                setTimeout(() => {
+                    dragHint.style.display = 'none';
+                }, 3000);
+            }, 2000);
         }
         
-        // 设置拖动手柄功能
+        // 设置拖动手柄功能（优化版）
         function setupDragHandle() {
             let startY, startBottom;
+            let isDragging = false;
             
             // 触摸事件处理
             dragHandle.addEventListener('touchstart', function(e) {
                 e.preventDefault();
                 startY = e.touches[0].clientY;
                 startBottom = parseInt(getComputedStyle(inputContainer).bottom);
+                isDragging = true;
+                inputContainer.style.transition = 'none'; // 禁用过渡效果
             });
             
             dragHandle.addEventListener('touchmove', function(e) {
+                if (!isDragging) return;
                 e.preventDefault();
-                if (startY === undefined) return;
                 
                 const deltaY = startY - e.touches[0].clientY;
                 const newBottom = startBottom + deltaY;
                 
                 // 限制输入栏移动范围 (20px - 屏幕高度的一半)
-                if (newBottom >= 20 && newBottom <= window.innerHeight / 2) {
+                if (newBottom >= 20 && newBottom <= window.innerHeight * 0.75) {
                     inputContainer.style.bottom = newBottom + 'px';
+                    updateMessagesHeight();
                 }
             });
             
             dragHandle.addEventListener('touchend', function() {
+                if (!isDragging) return;
+                
+                isDragging = false;
+                inputContainer.style.transition = ''; // 恢复过渡效果
                 saveInputPosition();
+                handleDragSnap();
             });
             
             // 鼠标事件处理（用于桌面测试）
@@ -975,28 +1026,74 @@
                 e.preventDefault();
                 startY = e.clientY;
                 startBottom = parseInt(getComputedStyle(inputContainer).bottom);
+                isDragging = true;
+                inputContainer.style.transition = 'none';
                 
                 document.addEventListener('mousemove', handleMouseMove);
                 document.addEventListener('mouseup', handleMouseUp);
             });
             
             function handleMouseMove(e) {
-                if (startY === undefined) return;
+                if (!isDragging) return;
                 
                 const deltaY = startY - e.clientY;
                 const newBottom = startBottom + deltaY;
                 
                 // 限制输入栏移动范围
-                if (newBottom >= 20 && newBottom <= window.innerHeight / 2) {
+                if (newBottom >= 20 && newBottom <= window.innerHeight * 0.75) {
                     inputContainer.style.bottom = newBottom + 'px';
+                    updateMessagesHeight();
                 }
             }
             
             function handleMouseUp() {
+                if (!isDragging) return;
+                
+                isDragging = false;
+                inputContainer.style.transition = '';
                 document.removeEventListener('mousemove', handleMouseMove);
                 document.removeEventListener('mouseup', handleMouseUp);
                 saveInputPosition();
+                handleDragSnap();
             }
+            
+            // 添加窗口大小变化监听器
+            window.addEventListener('resize', function() {
+                updateMessagesHeight();
+            });
+        }
+        
+        // 更新消息区域高度
+        function updateMessagesHeight() {
+            const titleHeight = document.querySelector('.mobile-title-display').offsetHeight;
+            const inputContainerTop = inputContainer.getBoundingClientRect().top;
+            const messagesHeight = inputContainerTop - titleHeight;
+            
+            if (messagesHeight > 100) {
+                mobileMessages.style.height = `${messagesHeight}px`;
+            }
+        }
+        
+        // 处理拖动结束后的吸附效果
+        function handleDragSnap() {
+            const currentBottom = parseInt(inputContainer.style.bottom);
+            const screenHeight = window.innerHeight;
+            
+            // 如果接近底部（20px范围内），则吸附到底部
+            if (currentBottom < 40) {
+                inputContainer.style.bottom = '0px';
+            } 
+            // 如果接近中间位置，吸附到中间
+            else if (Math.abs(currentBottom - screenHeight * 0.4) < 50) {
+                inputContainer.style.bottom = (screenHeight * 0.4) + 'px';
+            }
+            // 如果接近顶部，吸附到顶部
+            else if (currentBottom > screenHeight * 0.7) {
+                inputContainer.style.bottom = (screenHeight * 0.75) + 'px';
+            }
+            
+            updateMessagesHeight();
+            saveInputPosition();
         }
         
         // 保存输入栏位置
@@ -1011,6 +1108,8 @@
             if (savedPosition) {
                 inputContainer.style.bottom = savedPosition + 'px';
             }
+            // 初始化时更新消息区域高度
+            setTimeout(updateMessagesHeight, 100);
         }
         
         // 切换卡片显示状态
