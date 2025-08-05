@@ -28,6 +28,7 @@
             --settings-bg: rgba(25, 25, 25, 0.85);
             --primary-btn: linear-gradient(to bottom, #07C160, #06a850);
             --secondary-btn: linear-gradient(to bottom, #555, #444);
+            --blur-bg: rgba(30, 30, 30, 0.4);
         }
         
         body {
@@ -122,15 +123,13 @@
         
         /* 输入区域 - 添加模糊效果 */
         .mobile-input-area {
-            background: rgba(30, 30, 30, 0.4);
+            background: var(--blur-bg);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             padding: 10px;
             display: flex;
             flex-direction: column;
             gap: 10px;
-            /* 移除上边框 */
-            border-top: none;
         }
         
         .mobile-input-row {
@@ -172,22 +171,14 @@
             font-size: 18px;
         }
         
-        .mobile-input-hint {
-            font-size: 0.8rem;
-            color: #aaa;
-            text-align: center;
-        }
-        
-        /* 底部工具栏 - 添加模糊效果 */
+        /* 底部工具栏 - 添加模糊效果（与输入区域统一） */
         .mobile-toolbar {
             display: flex;
             justify-content: space-between;
-            background: rgba(30, 30, 30, 0.4);
+            background: var(--blur-bg);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             padding: 8px 15px;
-            /* 移除上边框 */
-            border-top: none;
         }
         
         .mobile-toolbar button {
@@ -452,33 +443,6 @@
             font-size: 0.85rem;
         }
         
-        /* 用户名显示 */
-        .mobile-username-display {
-            text-align: center;
-            padding: 10px;
-            background: rgba(30,30,30,0.7);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.9rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            /* 添加顶部内边距避免被手机状态栏遮挡 */
-            padding-top: 30px;
-        }
-        
-        .mobile-change-nickname-btn {
-            background: #555;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            margin-left: 5px;
-            border: none;
-            color: white;
-        }
-        
         /* 连接状态提示 */
         .connecting {
             animation: pulse 1.5s infinite;
@@ -506,6 +470,32 @@
                 max-width: 90%;
             }
         }
+        
+        /* 统一输入区域和工具栏的容器 */
+        .mobile-input-toolbar-container {
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* 新增样式：顶部标题栏 */
+        .mobile-title-display {
+            text-align: center;
+            padding: 12px;
+            background: rgba(30,30,30,0.7);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1.2rem; /* 增大字号 */
+            font-weight: bold;
+        }
+
+        /* 新增样式：用户名显示在输入区域上方 */
+        .mobile-user-display-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
     </style>
 </head>
 <body>
@@ -531,40 +521,45 @@
     
     <!-- 主界面 -->
     <div class="mobile-container">
-        <!-- 用户名显示 -->
-        <div class="mobile-username-display">
-            <span>用户名:</span>
-            <span id="mobileUsernameDisplay">未登录</span>
-            <button class="mobile-change-nickname-btn" id="mobileChangeNicknameBtn">更改</button>
-        </div>
+        <!-- 顶部标题栏 -->
+        <div class="mobile-title-display">Y.Server Chat</div>
         
         <!-- 消息显示区域 -->
         <div class="mobile-messages" id="mobileMessages">
             <div class="mobile-message mobile-system-message">
-                <div class="mobile-message-content">欢迎使用Y.Server Chat ME！请先点击下方“状态”连接服务器</div>
+                <div class="mobile-message-content">欢迎使用Y.Server Chat ME！请先连接服务器</div>
             </div>
         </div>
         
-        <!-- 输入区域 -->
-        <div class="mobile-input-area">
-            <div class="mobile-input-row">
-                <textarea id="mobileMessageInput" placeholder="输入消息..." disabled></textarea>
-                <button id="mobileSendBtn"><i class="fas fa-paper-plane"></i></button>
+        <!-- 输入区域和工具栏容器 -->
+        <div class="mobile-input-toolbar-container">
+            <!-- 输入区域 -->
+            <div class="mobile-input-area">
+                <!-- 用户名显示在输入区域上方 -->
+                <div class="mobile-user-display-container">
+                    <span>用户名:</span>
+                    <span id="mobileCurrentUsername">未登录</span>
+                    <button class="mobile-change-nickname-btn" id="mobileChangeNicknameBtn">更改</button>
+                </div>
+                
+                <div class="mobile-input-row">
+                    <textarea id="mobileMessageInput" placeholder="输入消息..." disabled></textarea>
+                    <button id="mobileSendBtn"><i class="fas fa-paper-plane"></i></button>
+                </div>
             </div>
-            <div class="mobile-input-hint">按Enter发送，Ctrl+Enter换行</div>
-        </div>
-        
-        <!-- 底部工具栏 -->
-        <div class="mobile-toolbar">
-            <button id="mobileStatusBtn">
-                <i class="fas fa-signal"></i> 状态
-            </button>
-            <button id="mobileSettingsBtn">
-                <i class="fas fa-cog"></i> 设置
-            </button>
-            <button id="mobileAboutBtn">
-                <i class="fas fa-info-circle"></i> 关于
-            </button>
+            
+            <!-- 底部工具栏 -->
+            <div class="mobile-toolbar">
+                <button id="mobileStatusBtn">
+                    <i class="fas fa-signal"></i> 状态
+                </button>
+                <button id="mobileSettingsBtn">
+                    <i class="fas fa-cog"></i> 设置
+                </button>
+                <button id="mobileAboutBtn">
+                    <i class="fas fa-info-circle"></i> 关于
+                </button>
+            </div>
         </div>
     </div>
     
@@ -669,7 +664,7 @@
         let mobileStatusText = document.getElementById('mobileStatusText');
         let mobileUserList = document.getElementById('mobileUserList');
         let mobileOnlineCount = document.getElementById('mobileOnlineCount');
-        let mobileUsernameDisplay = document.getElementById('mobileUsernameDisplay');
+        let mobileCurrentUsername = document.getElementById('mobileCurrentUsername'); // 更新为新的元素
         let loginOverlay = document.getElementById('loginOverlay');
         let wechatLogin = document.getElementById('wechatLogin');
         let guestLogin = document.getElementById('guestLogin');
@@ -753,29 +748,6 @@
             mobileCancelSettingsBtn.addEventListener('click', cancelSettings);
             mobileResetSettingsBtn.addEventListener('click', resetSettings);
             mobileBgImageInput.addEventListener('change', handleBackgroundImage);
-            
-            // 添加键盘事件监听器
-            setupKeyboardListeners();
-        }
-        
-        // 添加键盘事件监听器
-        function setupKeyboardListeners() {
-            // 当输入框获得焦点时（键盘弹出）
-            mobileMessageInput.addEventListener('focus', () => {
-                // 延迟滚动确保输入框在视图中
-                setTimeout(() => {
-                    mobileMessageInput.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                }, 300);
-            });
-            
-            // 当窗口大小变化时（键盘弹出/收起）
-            window.addEventListener('resize', () => {
-                // 如果输入框有焦点（键盘弹出状态）
-                if (document.activeElement === mobileMessageInput) {
-                    // 滚动到输入框位置
-                    mobileMessageInput.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                }
-            });
         }
         
         // 加载保存的背景图片
@@ -817,7 +789,7 @@
             currentUser.avatar = name.charAt(0).toUpperCase();
             
             // 更新界面显示
-            mobileUsernameDisplay.textContent = name;
+            mobileCurrentUsername.textContent = name; // 更新新的用户名显示元素
             loginAvatar.textContent = currentUser.avatar;
             
             // 添加系统消息
@@ -861,15 +833,19 @@
         function login(user) {
             currentUser = user;
             loginAvatar.textContent = user.avatar;
-            mobileUsernameDisplay.textContent = user.name;
+            mobileCurrentUsername.textContent = user.name; // 更新新的用户名显示元素
             loginOverlay.style.display = 'none';
             
             // 启用消息输入
             mobileMessageInput.disabled = false;
             mobileSendBtn.disabled = false;
             
-            // 登录后显示连接状态卡片
-            mobileStatusCard.style.display = 'block';
+            // 登录后检查WebSocket连接状态
+            if (!websocket || websocket.readyState !== WebSocket.OPEN) {
+                // 未连接服务器，显示连接状态卡片
+                mobileStatusCard.style.display = 'block';
+                addMessageToDisplay('system', '系统', '请点击下方“状态”，连接服务器开始聊天');
+            }
         }
         
         // 连接WebSocket
