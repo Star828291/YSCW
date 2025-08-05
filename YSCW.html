@@ -530,7 +530,7 @@
             margin-left: 9px;
         }
         
-        /* 移动设备优化 */
+        /* 平板设备优化 */
         @media (max-width: 900px) {
             .container {
                 grid-template-columns: 1fr;
@@ -541,236 +541,8 @@
             }
         }
         
-        @media (max-width: 600px) {
-            body {
-                padding: 8px;
-                font-size: 12px;
-            }
-            
-            .card {
-                padding: 10px;
-                min-width: unset;
-                min-height: unset;
-                width: 100%;
-                max-height: 80vh;
-                resize: none;
-            }
-            
-            .card-header {
-                padding-left: 40px; /* 给移动手柄留出空间 */
-                position: relative;
-            }
-            
-            .card-header h2 {
-                font-size: 1.1rem;
-            }
-            
-            .status-card {
-                min-height: unset;
-                height: auto;
-                max-height: 50vh;
-                position: relative;
-                z-index: 20;
-            }
-            
-            .chat-card {
-                height: calc(100vh - 120px);
-                min-height: unset;
-                position: absolute;
-                top: 60px;
-                left: 8px;
-                right: 8px;
-                bottom: 8px;
-                height: auto;
-            }
-            
-            .user-list {
-                max-height: 30vh;
-                /* 移动设备用户列表横向排列 */
-                flex-direction: row;
-                overflow-x: auto;
-                overflow-y: hidden;
-                padding-bottom: 5px;
-            }
-            
-            .user-item {
-                flex: 0 0 auto;
-                width: 100px; /* 固定宽度 */
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-                padding: 8px;
-                margin-right: 5px;
-            }
-            
-            .user-avatar {
-                width: 30px;
-                height: 30px;
-                font-size: 14px;
-                margin-bottom: 5px;
-            }
-            
-            .user-info {
-                width: 100%;
-            }
-            
-            .user-name {
-                justify-content: center;
-                font-size: 0.8rem;
-            }
-            
-            .game-status {
-                font-size: 0.6rem;
-                padding: 2px 4px;
-            }
-            
-            .message {
-                max-width: 90%;
-                padding: 8px 12px;
-            }
-            
-            .message-content {
-                font-size: 0.9rem;
-            }
-            
-            .message-sender {
-                font-size: 0.75rem;
-            }
-            
-            .message-time {
-                font-size: 0.6rem;
-            }
-            
-            .avatar-large {
-                width: 60px;
-                height: 60px;
-                font-size: 28px;
-            }
-            
-            .user-welcome h2 {
-                font-size: 1.3rem;
-            }
-            
-            .user-welcome p {
-                font-size: 0.85rem;
-            }
-            
-            .login-btn {
-                font-size: 0.9rem;
-                padding: 10px;
-            }
-            
-            .nickname-form {
-                width: 90%;
-                max-width: 280px;
-            }
-            
-            /* 移动设备上显示更改用户名按钮 */
-            .change-nickname-btn {
-                display: inline-block;
-                padding: 4px 8px;
-                font-size: 0.7rem;
-            }
-            
-            /* 移动端服务器地址显示 */
-            .server-address {
-                font-size: 0.9rem;
-                padding: 8px 0;
-                word-break: break-all;
-                max-width: 200px;
-            }
-            
-            /* 移动端专用元素 */
-            .mobile-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 8px 0;
-            }
-            
-            .mobile-only {
-                display: block;
-            }
-            
-            /* 隐藏桌面端元素 */
-            .desktop-only {
-                display: none;
-            }
-            
-            /* 调整设置按钮位置 */
-            #settingsBtn, #aboutBtn, #statusToggleBtn {
-                position: fixed;
-                bottom: 10px;
-                z-index: 100;
-                background: rgba(30,30,30,0.7);
-                border: none;
-                border-radius: 8px;
-                padding: 8px 12px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                cursor: pointer;
-                color: white;
-                font-size: 12px;
-                box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-                transition: all 0.3s ease;
-            }
-            
-            #settingsBtn {
-                left: 10px;
-            }
-            
-            #aboutBtn {
-                left: 80px;
-            }
-            
-            #statusToggleBtn {
-                left: 150px;
-            }
-        }
-        
-        /* 桌面设备隐藏移动端元素 */
-        .mobile-only {
-            display: none;
-        }
-        
-        .desktop-only {
-            display: block;
-        }
-        
-        /* 移动设备上的拖拽手柄 - 美化并缩小 */
-        .drag-handle-mobile {
-            display: none;
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            width: 24px; /* 缩小尺寸 */
-            height: 24px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-            justify-content: center;
-            align-items: center;
-            z-index: 2;
-            cursor: move;
-            box-shadow: 0 0 5px rgba(0,0,0,0.3);
-        }
-        
-        @media (max-width: 600px) {
-            .drag-handle-mobile {
-                display: flex;
-            }
-            
-            .drag-handle-mobile .drag-indicator {
-                width: 12px; /* 缩小指示器 */
-                height: 2px;
-                background: rgba(255,255,255,0.7);
-                border-radius: 2px;
-                margin: 1.5px 0; /* 调整间距 */
-            }
-        }
-        
         /* 设置按钮 */
-        #settingsBtn, #aboutBtn, #statusToggleBtn {
+        #settingsBtn, #aboutBtn {
             position: fixed;
             bottom: 20px;
             z-index: 100;
@@ -796,12 +568,7 @@
             left: 90px;
         }
         
-        #statusToggleBtn {
-            left: 160px;
-            display: none;
-        }
-        
-        #settingsBtn:hover, #aboutBtn:hover, #statusToggleBtn:hover {
+        #settingsBtn:hover, #aboutBtn:hover {
             background: rgba(40,40,40,0.9);
             transform: translateY(-2px);
         }
@@ -950,13 +717,6 @@
             background: #e68a00;
         }
         
-        /* 平板设备显示拖动手柄 */
-        @media (hover: none) and (pointer: coarse) {
-            .drag-handle-mobile {
-                display: flex;
-            }
-        }
-        
         /* 输入框和按钮布局优化 */
         .input-row {
             display: flex;
@@ -965,27 +725,6 @@
         
         .input-row textarea {
             flex: 1;
-        }
-        
-        @media (max-width: 600px) {
-            .input-row {
-                flex-direction: column;
-            }
-        }
-        
-        /* 移动端服务器信息显示 */
-        .server-info {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 10px;
-            background: rgba(40, 40, 40, 0.5);
-            border-radius: 10px;
-        }
-        
-        .server-address {
-            font-size: 0.9rem;
-            word-break: break-all;
         }
         
         /* 电脑端发送按钮美化 */
@@ -1017,15 +756,6 @@
             font-size: 16px;
         }
         
-        /* 移动端发送按钮样式 */
-        @media (max-width: 600px) {
-            #sendBtn {
-                width: 100%;
-                height: 40px;
-                font-size: 14px;
-            }
-        }
-        
         /* 连接状态提示 */
         .connecting {
             animation: pulse 1.5s infinite;
@@ -1047,11 +777,6 @@
     <!-- 关于按钮 -->
     <button id="aboutBtn">
         关于
-    </button>
-    
-    <!-- 连接状态切换按钮 (移动端) -->
-    <button id="statusToggleBtn" class="mobile-only">
-        连接状态
     </button>
     
     <!-- 设置卡片 -->
@@ -1085,17 +810,17 @@
             <!-- 更新版本信息 -->
             <div id="aboutText">
                 <p>YSCW - Y.Server Client Web Edition<p>
-		<p>-----------------<p>
+        <p>-----------------<p>
                 <p>版本：1.0 [W2507U1]</p>
                 <p>由 YQP 构建</p>
-		<p>-----------------<p>
-		<p>鸣谢：<p>
-		<p>cyn (@木楚殊频)：早期开发支持<p>
-		<p>-----------------<p>
-		<p>技术支持：<p>
-		<p>Ngrok：内网穿透支持<p>
-		<p>GitHub：仓库 - Star828291/YSCW<p>
-		<p>Netlify：域名支持<p>
+        <p>-----------------<p>
+        <p>鸣谢：<p>
+        <p>cyn (@木楚殊频)：早期开发支持<p>
+        <p>-----------------<p>
+        <p>技术支持：<p>
+        <p>Ngrok：内网穿透支持<p>
+        <p>GitHub：仓库 - Star828291/YSCW<p>
+        <p>Netlify：域名支持<p>
             </div>
         </div>
     </div>
@@ -1136,12 +861,6 @@
         <!-- 状态卡片 -->
         <div class="card status-card" id="statusCard">
             <div class="blur-effect"></div>
-            <!-- 移动设备拖动手柄 - 美化并缩小 -->
-            <div class="drag-handle-mobile">
-                <div class="drag-indicator"></div>
-                <div class="drag-indicator"></div>
-                <div class="drag-indicator"></div>
-            </div>
             
             <div class="card-header">
                 <h2>连接状态</h2>
@@ -1152,33 +871,15 @@
                 </div>
             </div>
             
-            <!-- 桌面端服务器表单 -->
-            <div class="desktop-only">
-                <div class="server-form">
-                    <div class="input-group">
-                        <label for="serverAddress">服务器地址</label>
-                        <input type="text" id="serverAddress" placeholder="https://服务器地址:端口">
-                    </div>
-                    
-                    <div class="btn-group">
-                        <button id="connectBtn">连接服务器</button>
-                        <button id="disconnectBtn" class="btn-secondary" disabled>断开连接</button>
-                    </div>
+            <div class="server-form">
+                <div class="input-group">
+                    <label for="serverAddress">服务器地址</label>
+                    <input type="text" id="serverAddress" placeholder="https://">
                 </div>
-            </div>
-            
-            <!-- 移动端服务器信息 -->
-            <div class="mobile-only">
-                <div class="server-form">
-                    <div class="input-group">
-                        <label for="serverAddressMobile">服务器地址</label>
-                        <input type="text" id="serverAddressMobile" placeholder="https://服务器地址:端口" value="wss://echo.websocket.org">
-                    </div>
-                    
-                    <div class="btn-group">
-                        <button id="connectBtnMobile">连接服务器</button>
-                        <button id="disconnectBtnMobile" class="btn-secondary" disabled>断开连接</button>
-                    </div>
+                
+                <div class="btn-group">
+                    <button id="connectBtn">连接服务器</button>
+                    <button id="disconnectBtn" class="btn-secondary" disabled>断开连接</button>
                 </div>
             </div>
             
@@ -1203,12 +904,6 @@
         <!-- 聊天卡片 -->
         <div class="card chat-card" id="chatCard">
             <div class="blur-effect"></div>
-            <!-- 移动设备拖动手柄 - 美化并缩小 -->
-            <div class="drag-handle-mobile">
-                <div class="drag-indicator"></div>
-                <div class="drag-indicator"></div>
-                <div class="drag-indicator"></div>
-            </div>
             
             <div class="card-header">
                 <h2>聊天</h2>
@@ -1245,10 +940,7 @@
         let sendBtn = document.getElementById('sendBtn');
         let connectBtn = document.getElementById('connectBtn');
         let disconnectBtn = document.getElementById('disconnectBtn');
-        let disconnectBtnMobile = document.getElementById('disconnectBtnMobile');
         let serverAddress = document.getElementById('serverAddress');
-        let serverAddressMobile = document.getElementById('serverAddressMobile');
-        let currentServerAddress = document.getElementById('currentServerAddress');
         let statusDot = document.getElementById('statusDot');
         let statusText = document.getElementById('statusText');
         let userList = document.getElementById('userList');
@@ -1274,89 +966,6 @@
         let bgError = document.getElementById('bgError');
         let aboutBtn = document.getElementById('aboutBtn');
         let aboutCard = document.getElementById('aboutCard');
-        let statusToggleBtn = document.getElementById('statusToggleBtn');
-        let statusCard = document.getElementById('statusCard');
-        let connectBtnMobile = document.getElementById('connectBtnMobile');
-        
-        // 检测移动设备
-        function isMobileDevice() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        }
-        
-        // 检测平板设备
-        function isTabletDevice() {
-            return /iPad|Android(?!.*Mobile)|Tablet|Silk/i.test(navigator.userAgent);
-        }
-        
-        // 检测触摸设备
-        function isTouchDevice() {
-            return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        }
-        
-        // 卡片拖拽功能（支持移动设备）
-        function initDrag() {
-            const cards = [document.getElementById('statusCard'), document.getElementById('chatCard')];
-            
-            cards.forEach(card => {
-                const header = card.querySelector('.card-header');
-                const mobileHandle = card.querySelector('.drag-handle-mobile');
-                
-                // 添加事件监听器
-                const startEvents = isTouchDevice() ? 
-                    [{ element: mobileHandle, event: 'touchstart' }] : 
-                    [{ element: header, event: 'mousedown' }];
-                
-                startEvents.forEach(({ element, event }) => {
-                    element.addEventListener(event, dragStart);
-                });
-                
-                function dragStart(e) {
-                    e.preventDefault();
-                    
-                    const isTouch = e.type === 'touchstart';
-                    const clientX = isTouch ? e.touches[0].clientX : e.clientX;
-                    const clientY = isTouch ? e.touches[0].clientY : e.clientY;
-                    
-                    // 记录初始位置
-                    const cardRect = card.getBoundingClientRect();
-                    const startLeft = cardRect.left;
-                    const startTop = cardRect.top;
-                    
-                    // 计算移动
-                    function dragMove(e) {
-                        const newX = isTouch ? e.touches[0].clientX : e.clientX;
-                        const newY = isTouch ? e.touches[0].clientY : e.clientY;
-                        const dx = newX - clientX;
-                        const dy = newY - clientY;
-                        
-                        // 应用新位置
-                        card.style.left = `${startLeft + dx}px`;
-                        card.style.top = `${startTop + dy}px`;
-                        card.style.position = 'absolute';
-                        card.style.margin = '0';
-                    }
-                    
-                    // 结束拖拽
-                    function dragEnd() {
-                        if (isTouch) {
-                            document.removeEventListener('touchmove', dragMove);
-                            document.removeEventListener('touchend', dragEnd);
-                        } else {
-                            document.removeEventListener('mousemove', dragMove);
-                            document.removeEventListener('mouseup', dragEnd);
-                        }
-                    }
-                    
-                    if (isTouch) {
-                        document.addEventListener('touchmove', dragMove);
-                        document.addEventListener('touchend', dragEnd);
-                    } else {
-                        document.addEventListener('mousemove', dragMove);
-                        document.addEventListener('mouseup', dragEnd);
-                    }
-                }
-            });
-        }
         
         // 初始化页面
         function initPage() {
@@ -1364,19 +973,13 @@
             wechatLogin.addEventListener('click', handleWechatLogin);
             guestLogin.addEventListener('click', handleGuestLogin);
             
-            // 设置连接事件 - 修复连接问题
+            // 设置连接事件
             connectBtn.addEventListener('click', () => {
                 const address = serverAddress.value.trim();
                 connectWebSocket(address);
             });
             
-            connectBtnMobile.addEventListener('click', () => {
-                const address = serverAddressMobile.value.trim();
-                connectWebSocket(address);
-            });
-            
             disconnectBtn.addEventListener('click', disconnectWebSocket);
-            disconnectBtnMobile.addEventListener('click', disconnectWebSocket);
             
             // 设置发送消息事件
             sendBtn.addEventListener('click', sendMessage);
@@ -1400,11 +1003,6 @@
                 aboutCard.style.display = aboutCard.style.display === 'block' ? 'none' : 'block';
             });
             
-            // 连接状态切换按钮事件
-            statusToggleBtn.addEventListener('click', () => {
-                statusCard.style.display = statusCard.style.display === 'block' ? 'none' : 'block';
-            });
-            
             // 点击外部关闭设置和关于卡片
             document.addEventListener('click', (e) => {
                 if (!settingsCard.contains(e.target) && e.target !== settingsBtn) {
@@ -1415,25 +1013,8 @@
                 }
             });
             
-            // 初始化拖拽功能
-            initDrag();
-            
             // 加载设置
             loadSettings();
-            
-            // 移动设备优化
-            if (isMobileDevice() || isTabletDevice()) {
-                document.body.classList.add('mobile-device');
-                
-                // 调整输入框高度
-                messageInput.style.height = '70px';
-                
-                // 显示连接状态切换按钮
-                statusToggleBtn.style.display = 'block';
-                
-                // 初始隐藏状态卡片
-                statusCard.style.display = 'none';
-            }
         }
         
         // 显示更改昵称表单
@@ -1526,14 +1107,6 @@
             // 启用消息输入
             messageInput.disabled = false;
             sendBtn.disabled = false;
-            
-            // 移动设备：登录后提示输入服务器地址
-            if (isMobileDevice() || isTabletDevice()) {
-                setTimeout(() => {
-                    statusCard.style.display = 'block';
-                    serverAddressMobile.focus();
-                }, 300);
-            }
         }
         
         // 连接WebSocket
@@ -1554,7 +1127,6 @@
             
             // 禁用连接按钮
             connectBtn.disabled = true;
-            connectBtnMobile.disabled = true;
             
             // 自动转换协议：https -> wss, http -> ws
             let serverAddr = address;
@@ -1578,14 +1150,7 @@
                     statusText.textContent = '已连接';
                     connectBtn.disabled = true;
                     disconnectBtn.disabled = false;
-                    disconnectBtnMobile.disabled = false;
                     serverAddress.disabled = true;
-                    serverAddressMobile.disabled = true;
-                    
-                    // 手机端连接后隐藏状态卡片
-                    if (isMobileDevice() || isTabletDevice()) {
-                        statusCard.style.display = 'none';
-                    }
                     
                     // 简化系统消息 - 只显示一条连接成功消息
                     addMessageToDisplay('system', '系统', `已成功连接到服务器，欢迎${currentUser.name}`);
@@ -1612,16 +1177,8 @@
                     statusDot.classList.remove('connected', 'connecting');
                     statusText.textContent = '未连接';
                     connectBtn.disabled = false;
-                    connectBtnMobile.disabled = false;
                     disconnectBtn.disabled = true;
-                    disconnectBtnMobile.disabled = true;
                     serverAddress.disabled = false;
-                    serverAddressMobile.disabled = false;
-                    
-                    // 手机端断开后显示状态卡片
-                    if (isMobileDevice() || isTabletDevice()) {
-                        statusCard.style.display = 'block';
-                    }
                     
                     // 断开连接时移除所有用户（保留系统用户）
                     const users = userList.querySelectorAll('.user-item');
@@ -1642,14 +1199,8 @@
                     addMessageToDisplay('system', '系统', '连接发生错误: ' + error.type);
                     statusDot.classList.remove('connecting');
                     
-                    // 移动端错误后显示状态卡片
-                    if (isMobileDevice() || isTabletDevice()) {
-                        statusCard.style.display = 'block';
-                    }
-                    
                     // 启用连接按钮
                     connectBtn.disabled = false;
-                    connectBtnMobile.disabled = false;
                 };
                 
             } catch (error) {
@@ -1657,14 +1208,8 @@
                 addMessageToDisplay('system', '系统', '连接失败: ' + error.message);
                 statusDot.classList.remove('connecting');
                 
-                // 移动端错误后显示状态卡片
-                if (isMobileDevice() || isTabletDevice()) {
-                    statusCard.style.display = 'block';
-                }
-                
                 // 启用连接按钮
                 connectBtn.disabled = false;
-                connectBtnMobile.disabled = false;
             }
         }
         
