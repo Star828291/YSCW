@@ -29,6 +29,7 @@
             --primary-btn: linear-gradient(to bottom, #07C160, #06a850);
             --secondary-btn: linear-gradient(to bottom, #555, #444);
             --blur-bg: rgba(30, 30, 30, 0.4);
+            --title-height: 65px;
         }
         
         body {
@@ -62,19 +63,20 @@
         .mobile-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 10px;
+            padding: 15px 10px 10px;
             background: rgba(25, 25, 25, 0.4);
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
         
         .mobile-message {
             max-width: 85%;
-            padding: 10px 15px;
-            border-radius: 18px;
+            padding: 12px 16px;
+            border-radius: 20px;
             position: relative;
             animation: fadeIn 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
         
         @keyframes fadeIn {
@@ -99,26 +101,27 @@
             background: var(--system-msg-bg);
             text-align: center;
             font-size: 0.8rem;
-            padding: 6px 12px;
+            padding: 8px 14px;
+            border-radius: 12px;
         }
         
         .mobile-message-sender {
             font-weight: 500;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             font-size: 0.85rem;
-            color: #ccc;
+            color: #d0d0d0;
         }
         
         .mobile-message-content {
             font-size: 0.95rem;
-            line-height: 1.4;
+            line-height: 1.45;
         }
         
         .mobile-message-time {
             font-size: 0.7rem;
             color: #aaa;
             text-align: right;
-            margin-top: 4px;
+            margin-top: 5px;
         }
         
         /* 输入区域和工具栏容器 - 合并为一个统一区域 */
@@ -133,7 +136,7 @@
         
         /* 输入区域 */
         .mobile-input-area {
-            padding: 10px;
+            padding: 10px 12px;
             display: flex;
             flex-direction: column;
             gap: 10px;
@@ -146,14 +149,21 @@
         
         .mobile-input-row textarea {
             flex: 1;
-            padding: 12px;
+            padding: 14px 16px;
             border-radius: 20px;
             border: 1px solid var(--border-color);
             background: rgba(30, 30, 30, 0.7);
             color: var(--text-color);
             font-size: 1rem;
             resize: none;
-            height: 50px;
+            min-height: 55px; /* 修复：改为最小高度 */
+            transition: all 0.2s ease;
+        }
+        
+        .mobile-input-row textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(7, 193, 96, 0.3);
+            outline: none;
         }
         
         #mobileSendBtn {
@@ -167,6 +177,7 @@
             transition: all 0.2s ease;
             border: none;
             color: white;
+            font-size: 0.9rem;
         }
         
         #mobileSendBtn:active {
@@ -186,7 +197,7 @@
         }
         
         .mobile-toolbar button {
-            padding: 8px 15px;
+            padding: 9px 16px;
             background: rgba(40,40,40,0.8);
             border: none;
             border-radius: 20px;
@@ -194,8 +205,9 @@
             font-size: 14px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             transition: transform 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         
         .mobile-toolbar button:active {
@@ -211,10 +223,10 @@
             background: var(--card-bg);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            border-radius: 14px;
+            border-radius: 16px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 7px 28px rgba(0, 0, 0, 0.3);
-            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            padding: 18px;
             z-index: 100;
             display: none;
         }
@@ -223,88 +235,95 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 10px;
-            margin-bottom: 10px;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
             border-bottom: 1px solid var(--border-color);
         }
         
         .mobile-status-header h2 {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             color: #fff;
         }
         
         .mobile-status-indicator {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 0.8rem;
+            gap: 8px;
+            font-size: 0.85rem;
         }
         
         .mobile-status-dot {
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background-color: var(--offline-badge);
         }
         
         .mobile-status-dot.connected {
             background-color: var(--online-badge);
-            box-shadow: 0 0 6px var(--online-badge);
+            box-shadow: 0 0 8px var(--online-badge);
         }
         
         .mobile-server-form {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            padding: 10px;
+            gap: 12px;
+            padding: 12px;
             background: rgba(40, 40, 40, 0.5);
-            border-radius: 10px;
-            margin-bottom: 10px;
+            border-radius: 12px;
+            margin-bottom: 12px;
         }
         
         .mobile-input-group {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 6px;
         }
         
         .mobile-input-group label {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #ccc;
         }
         
         .mobile-input-group input {
-            padding: 8px 10px;
-            border-radius: 8px;
+            padding: 10px 12px;
+            border-radius: 10px;
             border: 1px solid var(--border-color);
             background: rgba(30, 30, 30, 0.7);
             color: var(--text-color);
-            font-size: 0.85rem;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+        
+        .mobile-input-group input:focus {
+            border-color: var(--primary-color);
+            outline: none;
         }
         
         .mobile-btn-group {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             width: 100%;
             justify-content: center;
-            margin-top: 5px;
+            margin-top: 8px;
         }
         
         /* 美化按钮 */
         .mobile-card-btn {
-            padding: 10px 12px;
-            border-radius: 12px;
+            padding: 11px 15px;
+            border-radius: 14px;
             border: none;
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: white;
             cursor: pointer;
             transition: all 0.2s ease;
             outline: none;
             flex: 1;
             max-width: 150px;
-            min-width: 80px;
+            min-width: 90px;
             text-align: center;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
         }
         
         .mobile-card-btn.primary {
@@ -319,41 +338,52 @@
             transform: scale(0.95);
         }
         
+        /* 在线用户列表 - 改为水平排列 */
         .mobile-user-list {
             display: flex;
-            flex-direction: column;
-            gap: 8px;
+            flex-wrap: wrap;
+            gap: 10px;
             max-height: 200px;
             overflow-y: auto;
+            padding: 5px;
         }
         
         .mobile-user-item {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 8px;
-            padding: 6px;
-            border-radius: 8px;
+            gap: 6px;
+            padding: 8px;
+            border-radius: 10px;
             background: rgba(50, 50, 50, 0.4);
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+            width: 100px;
+        }
+        
+        .mobile-user-item:hover {
+            background: rgba(60, 60, 60, 0.6);
         }
         
         .mobile-user-avatar {
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: var(--primary-color);
             display: flex;
             justify-content: center;
             align-items: center;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
         .mobile-user-name {
             font-weight: 500;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
         }
         
         /* 登录界面 */
@@ -375,32 +405,32 @@
             width: 90%;
             max-width: 380px;
             background: var(--card-bg);
-            border-radius: 14px;
-            padding: 25px 20px;
+            border-radius: 16px;
+            padding: 28px 22px;
             text-align: center;
-            box-shadow: 0 9px 28px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
         }
         
         .login-card h1 {
-            margin-bottom: 20px;
+            margin-bottom: 22px;
             color: #fff;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
         }
         
         .login-options {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 15px;
         }
         
         .login-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            padding: 12px;
-            border-radius: 9px;
-            font-size: 0.95rem;
+            gap: 12px;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
             transition: transform 0.2s ease, background 0.3s ease;
@@ -421,30 +451,31 @@
         }
         
         .avatar-large {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             background: var(--primary-color);
-            margin: 0 auto 15px;
+            margin: 0 auto 18px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         
         .user-welcome {
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
         
         .user-welcome h2 {
-            font-size: 1.3rem;
-            margin-bottom: 6px;
+            font-size: 1.4rem;
+            margin-bottom: 8px;
         }
         
         .user-welcome p {
             color: #aaa;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
         }
         
         /* 连接状态提示 */
@@ -461,12 +492,12 @@
         /* 响应式调整 */
         @media (max-width: 380px) {
             .mobile-card-btn {
-                padding: 8px;
-                font-size: 0.75rem;
+                padding: 9px;
+                font-size: 0.8rem;
             }
             
             .mobile-toolbar button {
-                padding: 8px 12px;
+                padding: 8px 14px;
                 font-size: 13px;
             }
             
@@ -475,17 +506,21 @@
             }
         }
         
-        /* 顶部标题栏 - 位置下移 */
+        /* 顶部标题栏 - 增大高度 */
         .mobile-title-display {
             text-align: center;
-            padding: 12px;
+            padding: 18px 12px;
             background: rgba(30,30,30,0.7);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             border-bottom: 1px solid var(--border-color);
             font-size: 1.2rem;
             font-weight: bold;
-            margin-bottom: 2px; /* 增加下边距下移位置 */
+            height: var(--title-height);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
         }
 
         /* 用户名显示在输入区域上方 */
@@ -493,26 +528,91 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             margin-bottom: 8px;
+            font-size: 0.95rem;
         }
         
-        /* 工具栏位置微调 */
-        .mobile-toolbar {
-            margin-top: -5px; /* 上移工具栏 */
+        .mobile-change-nickname-btn {
+            padding: 4px 12px;
+            border-radius: 14px;
+            background: rgba(60,60,60,0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #ccc;
+            font-size: 0.8rem;
+            transition: all 0.2s;
         }
         
-        /* 输入栏焦点状态样式 */
-        .input-focused .mobile-messages {
-            padding-bottom: 60px; /* 为输入栏腾出空间 */
+        .mobile-change-nickname-btn:active {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(0.95);
         }
         
-        .input-focused .mobile-input-toolbar-container {
-            position: fixed;
-            top: 52px; /* 在标题栏下方 */
-            left: 0;
-            right: 0;
-            z-index: 50;
+        /* 卡片关闭按钮 - 修复位置 */
+        .mobile-card-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(40, 40, 40, 0.7);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #aaa;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 101;
+        }
+        
+        .mobile-card-close:hover {
+            background: rgba(60, 60, 60, 0.9);
+            color: white;
+        }
+        
+        /* 消息区域优化 */
+        .mobile-messages {
+            padding-top: 20px;
+        }
+        
+        /* 美化系统消息 */
+        .mobile-system-message {
+            background: linear-gradient(to right, #444, #555);
+            font-size: 0.85rem;
+            padding: 8px 16px;
+        }
+        
+        /* 美化滚动条 */
+        .mobile-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .mobile-messages::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+        }
+        
+        .mobile-user-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .mobile-user-list::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+        }
+        
+        /* 关于文本样式 - 缩小行距 */
+        #mobileAboutText {
+            line-height: 1.4; /* 从1.6减小到1.4 */
+            padding: 8px;
+        }
+        
+        #mobileAboutText p {
+            margin-bottom: 8px;
         }
     </style>
 </head>
@@ -528,9 +628,11 @@
             
             <div class="login-options">
                 <div class="login-btn wechat-login" id="wechatLogin">
-                    <span>微信登录-空壳，DS也不会 :(</span>
+                    <i class="fab fa-weixin"></i>
+                    <span>微信登录</span>
                 </div>
                 <div class="login-btn guest-login" id="guestLogin">
+                    <i class="fas fa-user"></i>
                     <span>访客登录</span>
                 </div>
             </div>
@@ -539,7 +641,7 @@
     
     <!-- 主界面 -->
     <div class="mobile-container">
-        <!-- 顶部标题栏 -->
+        <!-- 顶部标题栏 - 高度已增大 -->
         <div class="mobile-title-display">Y.Server Chat</div>
         
         <!-- 消息显示区域 -->
@@ -562,7 +664,7 @@
                 
                 <div class="mobile-input-row">
                     <textarea id="mobileMessageInput" placeholder="输入消息..." disabled></textarea>
-                    <button id="mobileSendBtn"><i class="fas fa-paper-plane"></i></button>
+                    <button id="mobileSendBtn"><i class="fas fa-paper-plane"></i> 发送</button>
                 </div>
             </div>
             
@@ -583,6 +685,9 @@
     
     <!-- 连接状态卡片 (手机版) -->
     <div class="mobile-status-card" id="mobileStatusCard">
+        <button class="mobile-card-close" id="closeStatusCard">
+            <i class="fas fa-times"></i>
+        </button>
         <div class="mobile-status-header">
             <h2>连接状态</h2>
             <div class="mobile-status-indicator">
@@ -621,6 +726,9 @@
     
     <!-- 设置卡片 -->
     <div class="mobile-status-card" id="mobileSettingsCard">
+        <button class="mobile-card-close" id="closeSettingsCard">
+            <i class="fas fa-times"></i>
+        </button>
         <div class="mobile-status-header">
             <h2>设置</h2>
         </div>
@@ -641,24 +749,27 @@
     
     <!-- 关于卡片 -->
     <div class="mobile-status-card" id="mobileAboutCard">
+        <button class="mobile-card-close" id="closeAboutCard">
+            <i class="fas fa-times"></i>
+        </button>
         <div class="mobile-status-header">
             <h2>关于</h2>
         </div>
         
         <div class="mobile-server-form">
             <div id="mobileAboutText">
-                <p>YSCW - Y.Server Client Moblie Edition<p>
-                <p>-----------------<p>
+                <p><strong>YSCW - Y.Server Client Mobile Edition</strong></p>
+                <p>-----------------</p>
                 <p>版本：1.0 [M2508U1]</p>
                 <p>由 YQP 构建</p>
-                <p>-----------------<p>
-                <p>鸣谢：<p>
-                <p>cyn (@木楚殊频)：早期开发支持<p>
-                <p>-----------------<p>
-                <p>技术支持：<p>
-                <p>Ngrok：内网穿透支持<p>
-                <p>GitHub：仓库 - Star828291/YSCW<p>
-                <p>Netlify：域名支持<p>
+                <p>-----------------</p>
+                <p>鸣谢：</p>
+                <p>cyn (@木楚殊频)：早期开发支持</p>
+                <p>-----------------</p>
+                <p>技术支持：</p>
+                <p>Ngrok：内网穿透支持</p>
+                <p>GitHub：仓库 - Star828291/YSCW</p>
+                <p>Netlify：域名支持</p>
             </div>
             
             <div class="mobile-btn-group">
@@ -699,6 +810,9 @@
         let mobileResetSettingsBtn = document.getElementById('mobileResetSettings');
         let mobileBgImageInput = document.getElementById('mobileBgImage');
         let mobileCloseAbout = document.getElementById('mobileCloseAbout');
+        let closeStatusCard = document.getElementById('closeStatusCard');
+        let closeSettingsCard = document.getElementById('closeSettingsCard');
+        let closeAboutCard = document.getElementById('closeAboutCard');
         
         // 初始化页面
         function initMobilePage() {
@@ -721,64 +835,37 @@
             mobileSendBtn.addEventListener('click', sendMessage);
             mobileMessageInput.addEventListener('keydown', handleKeyDown);
             
-            // 设置输入框焦点事件
-            mobileMessageInput.addEventListener('focus', () => {
-                document.body.classList.add('input-focused');
-                // 滚动到底部确保消息可见
-                setTimeout(() => {
-                    mobileMessages.scrollTop = mobileMessages.scrollHeight;
-                }, 100);
-            });
-            
-            mobileMessageInput.addEventListener('blur', () => {
-                document.body.classList.remove('input-focused');
-            });
-            
             // 设置更改昵称事件
             mobileChangeNicknameBtn.addEventListener('click', showNicknameForm);
             
             // 设置按钮事件
-            mobileStatusBtn.addEventListener('click', () => {
-                mobileStatusCard.style.display = 'block';
-                mobileSettingsCard.style.display = 'none';
-                mobileAboutCard.style.display = 'none';
-            });
-            
-            mobileSettingsBtn.addEventListener('click', () => {
-                mobileSettingsCard.style.display = 'block';
-                mobileStatusCard.style.display = 'none';
-                mobileAboutCard.style.display = 'none';
-            });
-            
-            mobileAboutBtn.addEventListener('click', () => {
-                mobileAboutCard.style.display = 'block';
-                mobileStatusCard.style.display = 'none';
-                mobileSettingsCard.style.display = 'none';
-            });
+            mobileStatusBtn.addEventListener('click', () => toggleCard(mobileStatusCard));
+            mobileSettingsBtn.addEventListener('click', () => toggleCard(mobileSettingsCard));
+            mobileAboutBtn.addEventListener('click', () => toggleCard(mobileAboutCard));
             
             // 设置卡片关闭逻辑
-            document.addEventListener('click', (e) => {
-                if (!mobileStatusCard.contains(e.target) && e.target !== mobileStatusBtn) {
-                    mobileStatusCard.style.display = 'none';
-                }
-                if (!mobileSettingsCard.contains(e.target) && e.target !== mobileSettingsBtn) {
-                    mobileSettingsCard.style.display = 'none';
-                }
-                if (!mobileAboutCard.contains(e.target) && e.target !== mobileAboutBtn) {
-                    mobileAboutCard.style.display = 'none';
-                }
-            });
-            
-            // 设置卡片关闭按钮
-            mobileCloseAbout.addEventListener('click', () => {
-                mobileAboutCard.style.display = 'none';
-            });
+            closeStatusCard.addEventListener('click', () => mobileStatusCard.style.display = 'none');
+            closeSettingsCard.addEventListener('click', () => mobileSettingsCard.style.display = 'none');
+            closeAboutCard.addEventListener('click', () => mobileAboutCard.style.display = 'none');
+            mobileCloseAbout.addEventListener('click', () => mobileAboutCard.style.display = 'none');
             
             // 设置保存按钮
             mobileSaveSettingsBtn.addEventListener('click', saveSettings);
             mobileCancelSettingsBtn.addEventListener('click', cancelSettings);
             mobileResetSettingsBtn.addEventListener('click', resetSettings);
             mobileBgImageInput.addEventListener('change', handleBackgroundImage);
+        }
+        
+        // 切换卡片显示状态
+        function toggleCard(card) {
+            const isVisible = card.style.display === 'block';
+            mobileStatusCard.style.display = 'none';
+            mobileSettingsCard.style.display = 'none';
+            mobileAboutCard.style.display = 'none';
+            
+            if (!isVisible) {
+                card.style.display = 'block';
+            }
         }
         
         // 加载保存的背景图片
@@ -1077,7 +1164,8 @@
                 mobileUserList.appendChild(userItem);
             });
             
-            mobileOnlineCount.textContent = users.length;
+            // 修复：在线人数应包含系统用户
+            mobileOnlineCount.textContent = users.length + 1;
         }
         
         // 发送消息
@@ -1093,6 +1181,9 @@
             websocket.send(JSON.stringify(msg));
             
             mobileMessageInput.value = '';
+            // 修复：发送后自动调整输入框高度
+            mobileMessageInput.style.height = 'auto';
+            mobileMessageInput.style.height = (mobileMessageInput.scrollHeight) + 'px';
         }
         
         // 处理按键事件
@@ -1105,6 +1196,9 @@
                 const end = mobileMessageInput.selectionEnd;
                 mobileMessageInput.value = mobileMessageInput.value.substring(0, start) + '\n' + mobileMessageInput.value.substring(end);
                 mobileMessageInput.selectionStart = mobileMessageInput.selectionEnd = start + 1;
+                // 自动调整输入框高度
+                mobileMessageInput.style.height = 'auto';
+                mobileMessageInput.style.height = (mobileMessageInput.scrollHeight) + 'px';
             }
         }
         
@@ -1181,6 +1275,12 @@
         
         // 页面加载完成后初始化
         window.addEventListener('DOMContentLoaded', initMobilePage);
+        
+        // 修复：输入框高度自适应
+        mobileMessageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
     </script>
 </body>
 </html>
