@@ -3,172 +3,261 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Y.Server 聊天</title>
+    <title>Y.S Chat</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            touch-action: manipulation;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         :root {
-            --primary-color: #07C160;
-            --dark-bg: #1A1A1A;
-            --card-bg: rgba(30, 30, 30, 0.6);
-            --text-color: #E0E0E0;
-            --border-color: #333;
-            --self-msg-bg: #2A8E55;
-            --other-msg-bg: #333;
-            --system-msg-bg: #444;
-            --online-badge: #4CAF50;
-            --offline-badge: #F44336;
-            --settings-bg: rgba(25, 25, 25, 0.85);
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --text-secondary: #6c757d;
+            --border-color: #e0e0e0;
+            --success-color: #4caf50;
+            --error-color: #f44336;
+            --warning-color: #ff9800;
+            --info-color: #2196f3;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --theme-color: #4361ee;
         }
         
         body {
-            background: linear-gradient(135deg, #2a4a8c, #d25f5f, #2a4a8c);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+            background-color: var(--bg-color);
             color: var(--text-color);
+            line-height: 1.6;
             min-height: 100vh;
-            padding: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            font-size: 13px;
-            transition: background 0.5s ease;
+            padding: 20px;
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #e4e7ec 100%);
+            transition: var(--transition);
         }
         
-        @keyframes gradientBG {
-            0% { background-position: 0% 50% }
-            50% { background-position: 100% 50% }
-            100% { background-position: 0% 50% }
+        .dark-theme {
+            --primary-color: #5e72e4;
+            --secondary-color: #4a56c9;
+            --bg-color: #1a1d28;
+            --card-bg: #252a3a;
+            --text-color: #f0f0f0;
+            --text-secondary: #a0a0a0;
+            --border-color: #3a3f4d;
+            background-image: none !important;
+            background-color: var(--bg-color) !important;
         }
         
         .container {
-            width: 100%;
             max-width: 1200px;
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 18px;
+            margin: 0 auto;
         }
         
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 7px 28px rgba(0, 0, 0, 0.3);
-            padding: 18px;
-            overflow: hidden;
-            position: relative;
-            resize: both;
-            overflow: auto;
-            min-width: 280px;
-            min-height: 380px;
-        }
-        
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--primary-color);
-            border-radius: 14px 14px 0 0;
-        }
-        
-        .status-card {
-            grid-column: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            min-height: 380px;
-        }
-        
-        .chat-card {
-            grid-column: 2;
-            display: flex;
-            flex-direction: column;
-            height: 78vh;
-            min-height: 480px;
-        }
-        
-        .card-header {
+        header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 11px;
-            margin-bottom: 14px;
-            border-bottom: 1px solid var(--border-color);
-            cursor: move;
-            user-select: none;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
         }
         
-        .card-header h2 {
-            font-size: 1.2rem;
-            color: #fff;
-        }
-        
-        .status-indicator {
+        .logo {
             display: flex;
             align-items: center;
-            gap: 7px;
-            font-size: 0.85rem;
+            gap: 15px;
         }
         
-        .status-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background-color: var(--offline-badge);
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
         }
         
-        .status-dot.connected {
-            background-color: var(--online-badge);
-            box-shadow: 0 0 7px var(--online-badge);
+        .logo h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
         
-        .user-list {
+        .theme-controls {
             display: flex;
-            flex-direction: column;
-            gap: 11px;
-            max-height: 280px;
-            overflow-y: auto;
-            padding-right: 7px;
+            gap: 15px;
+            align-items: center;
         }
         
-        .user-item {
+        .theme-btn {
+            background: var(--card-bg);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 9px;
-            padding: 7px;
-            border-radius: 9px;
-            background: rgba(50, 50, 50, 0.4);
-            transition: background 0.3s ease;
-            font-size: 0.85rem;
+            gap: 8px;
+            color: var(--text-color);
+            font-weight: 500;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            white-space: nowrap;
         }
         
-        .user-item:hover {
-            background: rgba(70, 70, 70, 0.5);
-        }
-        
-        .user-avatar {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
+        .theme-btn:hover {
             background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .panel {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-bottom: 30px;
+            transition: var(--transition);
+        }
+        
+        .panel-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .panel-title i {
+            color: var(--primary-color);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        input, select, button {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--card-bg);
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: var(--transition);
             display: flex;
             justify-content: center;
             align-items: center;
+            gap: 10px;
+        }
+        
+        .btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn:disabled {
+            background: var(--border-color);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-danger {
+            background: var(--error-color);
+        }
+        
+        .btn-danger:hover {
+            background: #d32f2f;
+            box-shadow: 0 6px 15px rgba(244, 67, 54, 0.3); /* 红色阴影 */
+        }
+        
+        .btn-success {
+            background: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background: #388e3c;
+        }
+        
+        .flex-container {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .flex-container > div {
+            flex: 1;
+        }
+        
+        .users-list {
+            list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .users-list li {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+        }
+        
+        .users-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .users-list li:hover {
+            background: rgba(67, 97, 238, 0.05);
+            border-radius: 8px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
             font-weight: bold;
-            font-size: 15px;
+            font-size: 1.2rem;
         }
         
         .user-info {
@@ -176,107 +265,48 @@
         }
         
         .user-name {
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            font-weight: 600;
+            margin-bottom: 4px;
         }
         
         .user-status {
-            font-size: 0.75rem;
-            color: #aaa;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         
-        .game-status {
-            font-size: 0.65rem;
-            background: rgba(100, 100, 100, 0.5);
-            padding: 2px 5px;
-            border-radius: 7px;
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success-color);
         }
         
-        .server-form {
+        .chat-container {
             display: flex;
             flex-direction: column;
-            gap: 11px;
-            padding: 11px;
-            background: rgba(40, 40, 40, 0.5);
-            border-radius: 11px;
+            height: 600px;
         }
         
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        
-        label {
-            font-size: 0.8rem;
-            color: #ccc;
-        }
-        
-        input {
-            padding: 9px 11px;
-            border-radius: 9px;
-            border: 1px solid var(--border-color);
-            background: rgba(30, 30, 30, 0.7);
-            color: var(--text-color);
-            font-size: 0.85rem;
-        }
-        
-        button {
-            padding: 9px;
-            border-radius: 9px;
-            border: none;
-            background: var(--primary-color);
-            color: white;
-            font-weight: 500;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-        
-        button:hover {
-            background: #06a850;
-        }
-        
-        button:disabled {
-            background: #555;
-            cursor: not-allowed;
-        }
-        
-        .btn-group {
-            display: flex;
-            gap: 7px;
-        }
-        
-        .btn-group button {
-            flex: 1;
-        }
-        
-        .btn-secondary {
-            background: #444;
-        }
-        
-        .btn-secondary:hover {
-            background: #555;
-        }
-        
-        .message-display {
+        .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 14px;
-            background: rgba(25, 25, 25, 0.4);
-            border-radius: 11px;
-            margin-bottom: 14px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
             display: flex;
             flex-direction: column;
-            gap: 11px;
+            gap: 15px;
         }
         
         .message {
             max-width: 80%;
-            padding: 9px 14px;
-            border-radius: 14px;
+            padding: 15px;
+            border-radius: 18px;
             position: relative;
             animation: fadeIn 0.3s ease;
         }
@@ -286,1239 +316,1248 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        .self-message {
+        .message-sent {
             align-self: flex-end;
-            background: var(--self-msg-bg);
-            border-bottom-right-radius: 3px;
+            background: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: 5px;
         }
         
-        .other-message {
+        .message-received {
             align-self: flex-start;
-            background: var(--other-msg-bg);
-            border-bottom-left-radius: 3px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 5px;
         }
         
-        .system-message {
+        .message-system {
             align-self: center;
-            background: var(--system-msg-bg);
-            text-align: center;
-            font-size: 0.8rem;
-            padding: 5px 11px;
+            background: var(--warning-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            max-width: 100%;
         }
         
-        /* 电脑端系统消息更小 */
-        @media (min-width: 601px) {
-            .system-message {
-                font-size: 0.75rem;
-            }
+        .message-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            opacity: 0.8;
+        }
+        
+        .message-form {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .message-form input {
+            flex: 1;
+        }
+        
+        .message-form button {
+            width: auto;
+            min-width: 100px;
+        }
+        
+        .status-bar {
+            padding: 15px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 20px;
+        }
+        
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--error-color);
+        }
+        
+        .connected .status-dot {
+            background: var(--success-color);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.4s ease;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: var(--success-color);
+        }
+        
+        .notification.error {
+            background: var(--error-color);
+        }
+        
+        .notification.info {
+            background: var(--info-color);
+        }
+        
+        .notification.warning {
+            background: var(--warning-color);
+        }
+        
+        #serverPanel {
+            transition: height 0.3s ease, opacity 0.3s ease;
+            overflow: hidden;
+        }
+        
+        #serverPanel.hidden {
+            height: 0;
+            opacity: 0;
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+        
+        #settingsPanel {
+            position: fixed;
+            top: 0;
+            right: -450px;
+            width: 450px;
+            height: 100%;
+            background: var(--card-bg);
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            z-index: 1001;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+        
+        #settingsPanel.show {
+            transform: translateX(-450px);
+        }
+        
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .settings-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+        
+        .color-options {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s;
+        }
+        
+        .color-option:hover, .color-option.active {
+            transform: scale(1.1);
+            border-color: var(--text-color);
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .overlay.show {
+            display: block;
+        }
+        
+        .message-container {
+            display: flex;
+            flex-direction: column;
+            max-width: 80%;
+            margin-bottom: 15px;
+        }
+        
+        .message-container.sent {
+            align-self: flex-end;
+        }
+        
+        .message-container.received {
+            align-self: flex-start;
         }
         
         .message-sender {
-            font-weight: 500;
-            margin-bottom: 3px;
             font-size: 0.8rem;
-            color: #ccc;
+            color: var(--text-secondary);
+            padding: 2px 8px;
         }
         
-        .message-content {
-            font-size: 0.9rem;
-            line-height: 1.4;
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .sent .message-bubble {
+            background: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .received .message-bubble {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 5px;
         }
         
         .message-time {
-            font-size: 0.65rem;
-            color: #aaa;
+            font-size: 0.7rem;
             text-align: right;
-            margin-top: 3px;
+            margin-top: 4px;
+            opacity: 0.7;
         }
         
-        .message-input-area {
+        #connectPanel {
+            position: fixed;
+            top: 0;
+            right: -450px;
+            width: 450px;
+            height: 100%;
+            background: var(--card-bg);
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            z-index: 1002;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+        
+        #connectPanel.show {
+            transform: translateX(-450px);
+        }
+        
+        .connect-header {
             display: flex;
-            flex-direction: column;
-            gap: 11px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
         }
         
-        textarea {
-            width: 100%;
-            padding: 11px;
-            border-radius: 11px;
-            border: 1px solid var(--border-color);
-            background: rgba(30, 30, 30, 0.7);
+        .connect-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
             color: var(--text-color);
-            font-size: 0.9rem;
-            resize: none;
-            height: 85px;
-        }
-        
-        .input-hint {
-            font-size: 0.75rem;
-            color: #aaa;
-            text-align: right;
         }
         
         .login-overlay {
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            backdrop-filter: blur(5px);
-        }
-        
-        .login-card {
-            width: 100%;
-            max-width: 380px;
-            background: var(--card-bg);
-            border-radius: 14px;
-            padding: 28px 23px;
-            text-align: center;
-            box-shadow: 0 9px 28px rgba(0, 0, 0, 0.5);
-        }
-        
-        .login-card h1 {
-            margin-bottom: 23px;
-            color: #fff;
-            font-size: 1.7rem;
-        }
-        
-        .login-options {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-        
-        .login-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 11px;
-            padding: 11px;
-            border-radius: 9px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: transform 0.2s ease, background 0.3s ease;
-        }
-        
-        .login-btn:active {
-            transform: scale(0.98);
-        }
-        
-        .wechat-login {
-            background: var(--primary-color);
-            color: white;
-        }
-        
-        .guest-login {
-            background: #444;
-            color: white;
-        }
-        
-        .avatar-large {
-            width: 65px;
-            height: 65px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            margin: 0 auto 14px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 30px;
-            font-weight: bold;
-        }
-        
-        .user-welcome {
-            margin-bottom: 23px;
-        }
-        
-        .user-welcome h2 {
-            font-size: 1.5rem;
-            margin-bottom: 7px;
-        }
-        
-        .user-welcome p {
-            color: #aaa;
-            font-size: 0.9rem;
-        }
-        
-        .blur-effect {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            backdrop-filter: blur(5px);
-            z-index: -1;
-            border-radius: 14px;
-        }
-        
-        .drag-handle {
-            cursor: move;
-            padding: 7px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            margin-right: 7px;
-        }
-        
-        .drag-indicator {
-            display: inline-block;
-            width: 17px;
-            height: 2.5px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 2px;
-            margin: 2px 0;
-        }
-        
-        /* 更改昵称表单样式 */
-        .nickname-form {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--card-bg);
-            padding: 18px;
-            border-radius: 14px;
-            box-shadow: 0 9px 23px rgba(0, 0, 0, 0.5);
-            z-index: 10;
-            width: 280px;
-        }
-        
-        .nickname-form h3 {
-            margin-bottom: 14px;
-            text-align: center;
-            font-size: 1.15rem;
-        }
-        
-        .nickname-form input {
-            width: 100%;
-            margin-bottom: 14px;
-            font-size: 0.85rem;
-        }
-        
-        .nickname-btn-group {
-            display: flex;
-            gap: 9px;
-        }
-        
-        .nickname-btn-group button {
-            flex: 1;
-        }
-        
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 5;
-        }
-        
-        /* 更改昵称按钮 */
-        .change-nickname-btn {
-            background: #555;
-            padding: 5px 11px;
-            border-radius: 7px;
-            font-size: 0.75rem;
-            margin-left: 9px;
-        }
-        
-        /* 平板设备优化 */
-        @media (max-width: 900px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-            
-            .status-card, .chat-card {
-                grid-column: 1;
-            }
-        }
-        
-        /* 设置按钮 */
-        #settingsBtn, #aboutBtn {
-            position: fixed;
-            bottom: 20px;
-            z-index: 100;
-            background: rgba(30,30,30,0.7);
-            border: none;
-            border-radius: 8px;
-            padding: 10px 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            color: white;
-            font-size: 14px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
-        }
-        
-        #settingsBtn {
-            left: 20px;
-        }
-        
-        #aboutBtn {
-            left: 90px;
-        }
-        
-        #settingsBtn:hover, #aboutBtn:hover {
-            background: rgba(40,40,40,0.9);
-            transform: translateY(-2px);
-        }
-        
-        /* 设置卡片 */
-        .settings-card, .about-card {
-            display: none;
-            position: fixed;
-            bottom: 70px;
-            z-index: 99;
-            background: var(--settings-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 14px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            padding: 20px;
-            width: 320px;
-            max-width: 90vw;
-        }
-        
-        .settings-card {
-            left: 20px;
-        }
-        
-        .about-card {
-            left: 90px;
-        }
-        
-        .settings-card h2, .about-card h2 {
-            color: white;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 1.3rem;
-        }
-        
-        .settings-content, .about-content {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        .setting-item {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .setting-item label {
-            font-size: 0.9rem;
-            color: #ddd;
-        }
-        
-        .setting-item select {
-            padding: 10px;
-            border-radius: 8px;
-            background: rgba(40,40,40,0.8);
-            color: white;
-            border: 1px solid var(--border-color);
-        }
-        
-        .bg-preview {
-            width: 100%;
-            height: 120px;
-            border-radius: 8px;
-            background-size: cover;
-            background-position: center;
-            border: 1px solid var(--border-color);
-            margin-top: 5px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .bg-preview::before {
-            content: '背景预览';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 5px;
-            background: rgba(0,0,0,0.5);
-            text-align: center;
-            font-size: 0.8rem;
-        }
-        
-        .file-input-wrapper {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-        }
-        
-        .file-input-wrapper input[type="file"] {
-            position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 0;
             width: 100%;
             height: 100%;
-            cursor: pointer;
-        }
-        
-        .file-input-label {
-            display: block;
-            padding: 10px;
-            background: rgba(40,40,40,0.8);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        .file-input-label:hover {
-            background: rgba(60,60,60,0.8);
-        }
-        
-        .settings-buttons {
+            background: var(--bg-color);
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
         }
         
-        .settings-buttons button {
+        .login-panel {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        .login-panel h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            color: var(--primary-color);
+        }
+        
+        .login-panel .logo {
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-panel .logo h1 {
+            font-size: 2.5rem;
+        }
+        
+        .login-panel .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .login-panel .btn {
+            font-size: 1.2rem;
+            padding: 15px;
+        }
+        
+        /* 全屏模式样式 - 优化部分 */
+        .fullscreen-chat {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 3000;
+            background: var(--card-bg);
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+        }
+        
+        .fullscreen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+        
+        .fullscreen-title {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-color);
+        }
+        
+        .fullscreen-messages {
             flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .fullscreen-form {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .fullscreen-form input {
+            flex: 1;
+        }
+        
+        .fullscreen-form button {
+            width: auto;
             min-width: 100px;
         }
         
-        .preview-bg {
-            background-size: cover;
-            background-position: center;
-        }
-        
-        .error-message {
-            color: #ff6b6b;
-            font-size: 0.8rem;
-            margin-top: 5px;
-            display: none;
-        }
-        
-        .reset-btn {
-            background: #FF9800;
-        }
-        
-        .reset-btn:hover {
-            background: #e68a00;
-        }
-        
-        /* 输入框和按钮布局优化 */
-        .input-row {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .input-row textarea {
-            flex: 1;
-        }
-        
-        /* 电脑端发送按钮美化 */
-        #sendBtn {
-            width: 90px; /* 加宽按钮 */
-            background: linear-gradient(to bottom, #07C160, #06a850);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            border-radius: 10px;
-            font-weight: bold;
+        /* 优化退出全屏按钮 */
+        #exitFullscreenBtn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: all 0.2s ease;
+            font-size: 1.2rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
         
-        #sendBtn:hover {
-            background: linear-gradient(to bottom, #06a850, #059140);
-            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
-            transform: translateY(-2px);
+        #exitFullscreenBtn:hover {
+            background: var(--secondary-color);
+            transform: scale(1.1);
         }
         
-        #sendBtn:active {
-            transform: translateY(1px);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        #exitFullscreenBtn:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.4);
         }
         
-        #sendBtn i {
-            margin-right: 5px;
-            font-size: 16px;
+        @media (max-width: 900px) {
+            .flex-container {
+                flex-direction: column;
+            }
+            
+            .chat-container {
+                height: 500px;
+            }
+            
+            #settingsPanel, #connectPanel {
+                width: 380px;
+            }
+            
+            #settingsPanel.show, #connectPanel.show {
+                transform: translateX(-380px);
+            }
         }
         
-        /* 连接状态提示 */
-        .connecting {
-            animation: pulse 1.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .theme-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .panel {
+                padding: 20px;
+            }
+            
+            .chat-container {
+                height: 400px;
+            }
+            
+            .message-container {
+                max-width: 90%;
+            }
+            
+            #settingsPanel, #connectPanel {
+                width: 100%;
+                right: -100%;
+                transform: none;
+            }
+            
+            #settingsPanel.show, #connectPanel.show {
+                right: 0;
+                transform: none;
+            }
+            
+            .login-panel {
+                padding: 25px;
+            }
+            
+            .login-panel h2 {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 设置按钮 -->
-    <button id="settingsBtn">
-        设置
-    </button>
+    <!-- 登录页面 -->
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-panel">
+            <div class="logo">
+                <i class="fas fa-server"></i>
+                <h1>登录到 Y.Server</h1>
+            </div>
+            <div class="form-group">
+                <label for="loginServerUrl">服务器地址</label>
+                <input type="text" id="loginServerUrl" placeholder="请输入服务器WebSocket地址">
+            </div>
+            <div class="form-group">
+                <label for="loginUsername">昵称</label>
+                <input type="text" id="loginUsername" placeholder="请输入你的昵称">
+            </div>
+            <button class="btn" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i>
+                进入
+            </button>
+        </div>
+    </div>
     
-    <!-- 关于按钮 -->
-    <button id="aboutBtn">
-        关于
-    </button>
-    
-    <!-- 设置卡片 -->
-    <div class="card settings-card" id="settingsCard">
-        <h2>设置</h2>
-        <div class="settings-content">
-            <div class="setting-item">
-                <label for="bgImage">网页背景</label>
-                <div class="file-input-wrapper">
-                    <div class="file-input-label">
-                        <i class="fas fa-image"></i> 选择背景图片
+    <!-- 主页面容器 -->
+    <div class="container" id="mainContainer" style="display: none;">
+        <header>
+            <div class="logo">
+                <i class="fas fa-comments"></i>
+                <h1>Y.Server Chat</h1>
+            </div>
+            <div class="theme-controls">
+                <button class="theme-btn" id="connectBtnHeader">
+                    <i class="fas fa-plug"></i>
+                    <span>连接</span>
+                </button>
+                <button class="theme-btn" id="settingsBtn">
+                    <i class="fas fa-cog"></i>
+                    <span>设置</span>
+                </button>
+                <button class="theme-btn" id="fullscreenBtn">
+                    <i class="fas fa-expand"></i>
+                    <span>全屏</span>
+                </button>
+            </div>
+        </header>
+        
+        <div class="flex-container">
+            <div class="panel">
+                <h2 class="panel-title">
+                    <i class="fas fa-users"></i>
+                    在线用户 (<span id="userCount">0</span>)
+                </h2>
+                <ul class="users-list" id="usersList">
+                    <li>连接服务器后显示在线用户</li>
+                </ul>
+            </div>
+            
+            <div class="panel">
+                <h2 class="panel-title">
+                    <i class="fas fa-comment-dots"></i>
+                    聊天室
+                </h2>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- 初始欢迎消息由JS添加 -->
                     </div>
-                    <input type="file" id="bgImage" accept="image/*">
-                </div>
-                <div class="bg-preview" id="bgPreview"></div>
-                <div class="error-message" id="bgError"></div>
-            </div>
-            
-            <div class="settings-buttons">
-                <button class="reset-btn" id="resetSettings">恢复初始</button>
-                <button id="saveSettings">确认</button>
-                <button class="btn-secondary" id="cancelSettings">取消</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 关于卡片 -->
-    <div class="card about-card" id="aboutCard">
-        <h2>关于</h2>
-        <div class="about-content">
-            <!-- 更新版本信息 -->
-            <div id="aboutText">
-                <p>YSCW - Y.Server Client Web Edition<p>
-        <p>-----------------<p>
-                <p>版本：1.0 [W2507U1]</p>
-                <p>由 YQP 构建</p>
-        <p>-----------------<p>
-        <p>鸣谢：<p>
-        <p>cyn (@木楚殊频)：早期开发支持<p>
-        <p>-----------------<p>
-        <p>技术支持：<p>
-        <p>Ngrok：内网穿透支持<p>
-        <p>GitHub：仓库 - Star828291/YSCW<p>
-        <p>Netlify：域名支持<p>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 更改昵称表单 -->
-    <div class="overlay" id="nicknameOverlay"></div>
-    <div class="nickname-form" id="nicknameForm">
-        <h3>更改昵称</h3>
-        <input type="text" id="newNickname" placeholder="输入新昵称">
-        <div class="nickname-btn-group">
-            <button id="confirmNickname">确认</button>
-            <button class="btn-secondary" id="cancelNickname">取消</button>
-        </div>
-    </div>
-    
-    <!-- 登录界面 -->
-    <div class="login-overlay" id="loginOverlay">
-        <div class="login-card">
-            <div class="avatar-large" id="loginAvatar">Y</div>
-            <div class="user-welcome">
-                <h2>欢迎加入Y.Server</h2>
-                <p>请选择登录方式开始聊天</p>
-            </div>
-            
-            <div class="login-options">
-                <div class="login-btn wechat-login" id="wechatLogin">
-                    <span>微信登录-空壳，DS也不会 :(</span>
-                </div>
-                <div class="login-btn guest-login" id="guestLogin">
-                    <span>访客登录</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 主界面 -->
-    <div class="container">
-        <!-- 状态卡片 -->
-        <div class="card status-card" id="statusCard">
-            <div class="blur-effect"></div>
-            
-            <div class="card-header">
-                <h2>连接状态</h2>
-                <div class="status-indicator">
-                    <span>状态:</span>
-                    <div class="status-dot" id="statusDot"></div>
-                    <span id="statusText">未连接</span>
-                </div>
-            </div>
-            
-            <div class="server-form">
-                <div class="input-group">
-                    <label for="serverAddress">服务器地址</label>
-                    <input type="text" id="serverAddress" placeholder="https://">
-                </div>
-                
-                <div class="btn-group">
-                    <button id="connectBtn">连接服务器</button>
-                    <button id="disconnectBtn" class="btn-secondary" disabled>断开连接</button>
-                </div>
-            </div>
-            
-            <div class="card-header">
-                <h2>在线用户 (<span id="onlineCount">0</span>)</h2>
-            </div>
-            
-            <div class="user-list" id="userList">
-                <div class="user-item">
-                    <div class="user-avatar">S</div>
-                    <div class="user-info">
-                        <div class="user-name">
-                            <span>系统</span>
-                            <span class="status-dot connected"></span>
-                        </div>
-                        <div class="user-status">在线服务</div>
+                    <div class="message-form">
+                        <input type="text" id="messageInput" placeholder="输入消息..." disabled>
+                        <button class="btn" id="sendBtn" disabled>
+                            <i class="fas fa-paper-plane"></i>
+                            发送
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- 聊天卡片 -->
-        <div class="card chat-card" id="chatCard">
-            <div class="blur-effect"></div>
-            
-            <div class="card-header">
-                <h2>聊天</h2>
-                <div class="status-indicator">
-                    <span>用户名:</span>
-                    <span id="usernameDisplay">未登录</span>
-                    <button class="change-nickname-btn" id="changeNicknameBtn">更改</button>
-                </div>
+        <div class="status-bar">
+            <div class="connection-status" id="connectionStatus">
+                <div class="status-dot"></div>
+                <span>未连接</span>
             </div>
-            
-            <div class="message-display" id="messageDisplay">
-                <div class="message system-message">
-                    <div class="message-content">欢迎使用Y.Server WebSocket聊天！请先连接服务器</div>
-                </div>
-            </div>
-            
-            <div class="message-input-area">
-                <div class="input-row">
-                    <textarea id="messageInput" placeholder="输入消息..." disabled></textarea>
-                    <button id="sendBtn"><i class="fas fa-paper-plane"></i> 发送</button>
-                </div>
-                <div class="input-hint">按Enter发送，Ctrl+Enter换行</div>
+            <div id="connectionInfo">
+                请连接服务器
             </div>
         </div>
     </div>
-
+    
+    <!-- 全屏聊天模式 - 优化后 -->
+    <div class="fullscreen-chat" id="fullscreenChat">
+        <div class="fullscreen-header">
+            <div class="fullscreen-title">
+                <i class="fas fa-comments"></i>
+                <span>Y.S Chat</span>
+            </div>
+            <button class="btn" id="exitFullscreenBtn" title="退出全屏模式">
+                <i class="fas fa-compress"></i>
+            </button>
+        </div>
+        <div class="fullscreen-messages" id="fullscreenMessages"></div>
+        <div class="fullscreen-form">
+            <input type="text" id="fullscreenInput" placeholder="输入消息...">
+            <button class="btn" id="fullscreenSendBtn">
+                <i class="fas fa-paper-plane"></i>
+                发送
+            </button>
+        </div>
+    </div>
+    
+    <div class="overlay" id="overlay"></div>
+    
+    <!-- 连接服务器面板 -->
+    <div id="connectPanel">
+        <div class="connect-header">
+            <h2><i class="fas fa-plug"></i></h2>
+            <button class="connect-close" id="closeConnect">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="panel">
+            <div class="form-group">
+                <label for="serverUrl">服务器地址</label>
+                <input type="text" id="serverUrl" placeholder="请输入WebSocket服务器地址">
+            </div>
+            <div class="form-group">
+                <label for="username">昵称</label>
+                <input type="text" id="username" placeholder="请输入你的昵称">
+            </div>
+            <button class="btn" id="connectBtn">
+                <i class="fas fa-plug"></i>
+                连接服务器
+            </button>
+        </div>
+    </div>
+    
+    <!-- 设置面板 -->
+    <div id="settingsPanel">
+        <div class="settings-header">
+            <h2><i class="fas fa-cog"></i></h2>
+            <button class="settings-close" id="closeSettings">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="panel">
+            <h2 class="panel-title">
+                <i class="fas fa-user-edit"></i>
+                更改昵称
+            </h2>
+            <div class="form-group">
+                <label for="newUsername">新昵称</label>
+                <input type="text" id="newUsername" placeholder="输入新的昵称">
+            </div>
+            <button class="btn" id="changeNameBtn">
+                <i class="fas fa-signature"></i>
+                更改昵称
+            </button>
+        </div>
+        
+        <div class="panel">
+            <h2 class="panel-title">
+                <i class="fas fa-palette"></i>
+                主题设置
+            </h2>
+            <button class="btn" id="themeToggle">
+                <i class="fas fa-moon"></i>
+                <span id="themeText">深色模式</span>
+            </button>
+            
+            <div class="form-group" style="margin-top: 20px;">
+                <label>主题颜色</label>
+                <div class="color-options">
+                    <div class="color-option" style="background: #4361ee;" data-color="#4361ee"></div>
+                    <div class="color-option" style="background: #4caf50;" data-color="#4caf50"></div>
+                    <div class="color-option" style="background: #f44336;" data-color="#f44336"></div>
+                    <div class="color-option" style="background: #ff9800;" data-color="#ff9800"></div>
+                    <div class="color-option" style="background: #9c27b0;" data-color="#9c27b0"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h2 class="panel-title">
+                <i class="fas fa-image"></i>
+                背景设置
+            </h2>
+            <div class="form-group">
+                <label for="bgImage">背景图片</label>
+                <input type="file" id="bgImage" accept="image/*">
+            </div>
+            <button class="btn btn-danger" id="resetBgBtn">
+                <i class="fas fa-trash"></i>
+                重置背景
+            </button>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification"></div>
+    
     <script>
-        // 全局变量
-        let websocket = null;
-        let currentUser = null;
-        let currentClientId = null;
-        let messageDisplay = document.getElementById('messageDisplay');
-        let messageInput = document.getElementById('messageInput');
-        let sendBtn = document.getElementById('sendBtn');
-        let connectBtn = document.getElementById('connectBtn');
-        let disconnectBtn = document.getElementById('disconnectBtn');
-        let serverAddress = document.getElementById('serverAddress');
-        let statusDot = document.getElementById('statusDot');
-        let statusText = document.getElementById('statusText');
-        let userList = document.getElementById('userList');
-        let onlineCount = document.getElementById('onlineCount');
-        let usernameDisplay = document.getElementById('usernameDisplay');
-        let loginOverlay = document.getElementById('loginOverlay');
-        let wechatLogin = document.getElementById('wechatLogin');
-        let guestLogin = document.getElementById('guestLogin');
-        let loginAvatar = document.getElementById('loginAvatar');
-        let changeNicknameBtn = document.getElementById('changeNicknameBtn');
-        let nicknameForm = document.getElementById('nicknameForm');
-        let nicknameOverlay = document.getElementById('nicknameOverlay');
-        let newNickname = document.getElementById('newNickname');
-        let confirmNickname = document.getElementById('confirmNickname');
-        let cancelNickname = document.getElementById('cancelNickname');
-        let settingsBtn = document.getElementById('settingsBtn');
-        let settingsCard = document.getElementById('settingsCard');
-        let saveSettingsBtn = document.getElementById('saveSettings');
-        let cancelSettingsBtn = document.getElementById('cancelSettings');
-        let resetSettingsBtn = document.getElementById('resetSettings');
-        let bgImageInput = document.getElementById('bgImage');
-        let bgPreview = document.getElementById('bgPreview');
-        let bgError = document.getElementById('bgError');
-        let aboutBtn = document.getElementById('aboutBtn');
-        let aboutCard = document.getElementById('aboutCard');
+        // DOM元素
+        const connectBtn = document.getElementById('connectBtn');
+        const connectBtnHeader = document.getElementById('connectBtnHeader');
+        const sendBtn = document.getElementById('sendBtn');
+        const changeNameBtn = document.getElementById('changeNameBtn');
+        const themeToggle = document.getElementById('themeToggle');
+        const themeText = document.getElementById('themeText');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const closeSettings = document.getElementById('closeSettings');
+        const closeConnect = document.getElementById('closeConnect');
+        const serverUrlInput = document.getElementById('serverUrl');
+        const usernameInput = document.getElementById('username');
+        const newUsernameInput = document.getElementById('newUsername');
+        const messageInput = document.getElementById('messageInput');
+        const chatMessages = document.getElementById('chatMessages');
+        const usersList = document.getElementById('usersList');
+        const userCount = document.getElementById('userCount');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const connectionInfo = document.getElementById('connectionInfo');
+        const notification = document.getElementById('notification');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const connectPanel = document.getElementById('connectPanel');
+        const overlay = document.getElementById('overlay');
+        const bgImageInput = document.getElementById('bgImage');
+        const colorOptions = document.querySelectorAll('.color-option');
+        const resetBgBtn = document.getElementById('resetBgBtn');
+        const loginOverlay = document.getElementById('loginOverlay');
+        const mainContainer = document.getElementById('mainContainer');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginServerUrlInput = document.getElementById('loginServerUrl');
+        const loginUsernameInput = document.getElementById('loginUsername');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const exitFullscreenBtn = document.getElementById('exitFullscreenBtn');
+        const fullscreenChat = document.getElementById('fullscreenChat');
+        const fullscreenMessages = document.getElementById('fullscreenMessages');
+        const fullscreenInput = document.getElementById('fullscreenInput');
+        const fullscreenSendBtn = document.getElementById('fullscreenSendBtn');
         
-        // 初始化页面
-        function initPage() {
-            // 设置登录事件
-            wechatLogin.addEventListener('click', handleWechatLogin);
-            guestLogin.addEventListener('click', handleGuestLogin);
-            
-            // 设置连接事件
-            connectBtn.addEventListener('click', () => {
-                const address = serverAddress.value.trim();
-                connectWebSocket(address);
-            });
-            
-            disconnectBtn.addEventListener('click', disconnectWebSocket);
-            
-            // 设置发送消息事件
-            sendBtn.addEventListener('click', sendMessage);
-            messageInput.addEventListener('keydown', handleKeyDown);
-            
-            // 设置更改昵称事件
-            changeNicknameBtn.addEventListener('click', showNicknameForm);
-            confirmNickname.addEventListener('click', changeNickname);
-            cancelNickname.addEventListener('click', hideNicknameForm);
-            nicknameOverlay.addEventListener('click', hideNicknameForm);
-            
-            // 设置事件
-            settingsBtn.addEventListener('click', toggleSettings);
-            saveSettingsBtn.addEventListener('click', saveSettings);
-            cancelSettingsBtn.addEventListener('click', cancelSettings);
-            resetSettingsBtn.addEventListener('click', resetSettings);
-            bgImageInput.addEventListener('change', handleBackgroundImage);
-            
-            // 关于按钮事件
-            aboutBtn.addEventListener('click', () => {
-                aboutCard.style.display = aboutCard.style.display === 'block' ? 'none' : 'block';
-            });
-            
-            // 点击外部关闭设置和关于卡片
-            document.addEventListener('click', (e) => {
-                if (!settingsCard.contains(e.target) && e.target !== settingsBtn) {
-                    settingsCard.style.display = 'none';
-                }
-                if (!aboutCard.contains(e.target) && e.target !== aboutBtn) {
-                    aboutCard.style.display = 'none';
-                }
-            });
-            
-            // 加载设置
-            loadSettings();
-        }
+        // WebSocket连接
+        let socket = null;
+        let connected = false;
+        let userId = null;
+        let username = '';
         
-        // 显示更改昵称表单
-        function showNicknameForm() {
-            if (!currentUser) {
-                alert('请先登录！');
+        // 登录按钮事件
+        loginBtn.addEventListener('click', () => {
+
+            // 协议转换
+            let serverUrl = loginServerUrlInput.value.trim();
+            if (serverUrl.startsWith('https://')) {
+                serverUrl = serverUrl.replace('https://', 'wss://');
+            }
+
+            username = loginUsernameInput.value.trim();
+            
+            if (!serverUrl) {
+                showNotification('请输入服务器地址', 'error');
                 return;
             }
             
-            nicknameForm.style.display = 'block';
-            nicknameOverlay.style.display = 'block';
-            newNickname.value = currentUser.name;
-            newNickname.focus();
-        }
+            if (!username) {
+                showNotification('请输入昵称', 'error');
+                return;
+            }
+            
+            // 保存用户名
+            localStorage.setItem('username', username);
+            
+            // 填充到主页面
+            serverUrlInput.value = serverUrl;
+            usernameInput.value = username;
+            
+            // 显示主页面，隐藏登录页面
+            loginOverlay.style.display = 'none';
+            mainContainer.style.display = 'block';
+            
+            // 尝试连接
+            connect();
+        });
         
-        // 隐藏更改昵称表单
-        function hideNicknameForm() {
-            nicknameForm.style.display = 'none';
-            nicknameOverlay.style.display = 'none';
-        }
+        // 连接/断开服务器
+        connectBtn.addEventListener('click', () => {
+            if (connected) {
+                disconnect();
+            } else {
+                connect();
+            }
+        });
+        
+        // 标题栏的连接按钮
+        connectBtnHeader.addEventListener('click', () => {
+            connectPanel.classList.add('show');
+            overlay.classList.add('show');
+        });
+        
+        // 发送消息
+        sendBtn.addEventListener('click', sendMessage);
+        
+        // 发送消息（按回车键）
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // 全屏发送消息
+        fullscreenInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                fullscreenSendMessage();
+            }
+        });
+        
+        fullscreenSendBtn.addEventListener('click', fullscreenSendMessage);
         
         // 更改昵称
-        function changeNickname() {
-            const name = newNickname.value.trim();
-            if (!name) {
-                alert('昵称不能为空！');
-                return;
+        changeNameBtn.addEventListener('click', () => {
+            const newName = newUsernameInput.value.trim();
+            if (newName && newName !== username) {
+                // 保存新用户名
+                localStorage.setItem('username', newName);
+                sendCommand('rename', { name: newName });
             }
-            
-            if (name.length > 20) {
-                alert('昵称长度不能超过20个字符！');
-                return;
-            }
-            
-            // 更新当前用户昵称
-            const oldName = currentUser.name;
-            currentUser.name = name;
-            currentUser.avatar = name.charAt(0).toUpperCase();
-            
-            // 更新界面显示
-            usernameDisplay.textContent = name;
-            loginAvatar.textContent = currentUser.avatar;
-            
-            // 添加系统消息
-            addMessageToDisplay('system', '系统', `您已将昵称从 "${oldName}" 更改为 "${name}"`);
-            
-            // 如果有WebSocket连接，通知服务器昵称变更
-            if (websocket && websocket.readyState === WebSocket.OPEN) {
-                const msg = {
-                    type: 'rename',
-                    name: name
-                };
-                websocket.send(JSON.stringify(msg));
-            }
-            
-            hideNicknameForm();
+        });
+        
+        // 打开设置面板
+        settingsBtn.addEventListener('click', () => {
+            settingsPanel.classList.add('show');
+            overlay.classList.add('show');
+        });
+        
+        // 关闭设置面板
+        closeSettings.addEventListener('click', closePanels);
+        closeConnect.addEventListener('click', closePanels);
+        overlay.addEventListener('click', closePanels);
+        
+        function closePanels() {
+            settingsPanel.classList.remove('show');
+            connectPanel.classList.remove('show');
+            overlay.classList.remove('show');
         }
         
-        // 处理微信登录
-        function handleWechatLogin() {
-            // 模拟微信登录
-            const user = {
-                id: 'wx_' + Math.random().toString(36).substr(2, 8),
-                name: '微信用户_' + Math.floor(Math.random() * 1000),
-                avatar: 'W'
+        // 切换深色/浅色模式
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            const icon = themeToggle.querySelector('i');
+            
+            if (document.body.classList.contains('dark-theme')) {
+                icon.classList.replace('fa-moon', 'fa-sun');
+                themeText.textContent = '深色模式';
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                icon.classList.replace('fa-sun', 'fa-moon');
+                themeText.textContent = '浅色模式';
+                localStorage.setItem('darkMode', 'false');
+            }
+            
+            showNotification(`已切换至${themeText.textContent}`, 'success');
+        });
+        
+        // 更换主题颜色
+        colorOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const color = option.getAttribute('data-color');
+                document.documentElement.style.setProperty('--primary-color', color);
+                document.documentElement.style.setProperty('--secondary-color', color);
+                localStorage.setItem('themeColor', color);
+                
+                // 更新按钮上的颜色
+                const buttons = document.querySelectorAll('.btn:not(.btn-danger):not(.btn-success)');
+                buttons.forEach(btn => {
+                    btn.style.background = color;
+                });
+                
+                // 更新浅色模式背景（如果没有背景图片）
+                if (!localStorage.getItem('bgImage') && !document.body.classList.contains('dark-theme')) {
+                    document.body.style.backgroundImage = `linear-gradient(135deg, ${color}20 0%, ${adjustColor(color, -20)}20 100%)`;
+                }
+                
+                showNotification('主题颜色已更换', 'success');
+            });
+        });
+        
+        // 辅助函数：调整颜色亮度
+        function adjustColor(hex, percent) {
+            hex = hex.replace(/^#/, '');
+            let r = parseInt(hex.substring(0, 2), 16);
+            let g = parseInt(hex.substring(2, 4), 16);
+            let b = parseInt(hex.substring(4, 6), 16);
+            
+            r = Math.min(255, Math.max(0, r + r * percent / 100));
+            g = Math.min(255, Math.max(0, g + g * percent / 100));
+            b = Math.min(255, Math.max(0, b + b * percent / 100));
+            
+            return `#${Math.round(r).toString(16).padStart(2, '0')}${Math.round(g).toString(16).padStart(2, '0')}${Math.round(b).toString(16).padStart(2, '0')}`;
+        }
+        
+        // 更换背景图片
+        bgImageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    document.body.style.backgroundImage = `url(${event.target.result})`;
+                    document.body.style.backgroundSize = 'cover';
+                    document.body.style.backgroundAttachment = 'fixed';
+                    localStorage.setItem('bgImage', event.target.result);
+                    showNotification('背景图片已更换', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // 重置背景
+        resetBgBtn.addEventListener('click', () => {
+            document.body.style.backgroundImage = '';
+            localStorage.removeItem('bgImage');
+            showNotification('背景已重置', 'success');
+        });
+        
+        // 进入全屏模式
+        fullscreenBtn.addEventListener('click', () => {
+            fullscreenChat.style.display = 'flex';
+            mainContainer.style.display = 'none';
+            
+            // 确保全屏容器滚动到底部
+            fullscreenMessages.scrollTop = fullscreenMessages.scrollHeight;
+            
+            // 聚焦输入框
+            fullscreenInput.focus();
+        });
+        
+        // 退出全屏模式
+        exitFullscreenBtn.addEventListener('click', () => {
+            fullscreenChat.style.display = 'none';
+            mainContainer.style.display = 'block';
+            
+            // 确保主容器滚动到底部
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+        
+        // 全屏发送消息
+        function fullscreenSendMessage() {
+            const message = fullscreenInput.value.trim();
+            if (!message || !socket) return;
+            
+            const data = {
+                type: 'message',
+                content: message
             };
-            login(user);
-        }
-        
-        // 处理访客登录
-        function handleGuestLogin() {
-            const name = prompt('请输入您的用户名', '访客_' + Math.floor(Math.random() * 1000));
-            if (name && name.trim() !== '') {
-                const user = {
-                    id: 'guest_' + Math.random().toString(36).substr(2, 6),
-                    name: name.trim(),
-                    avatar: name.trim().charAt(0).toUpperCase()
-                };
-                login(user);
-            }
-        }
-        
-        // 登录处理
-        function login(user) {
-            currentUser = user;
-            loginAvatar.textContent = user.avatar;
-            usernameDisplay.textContent = user.name;
-            loginOverlay.style.display = 'none';
             
-            // 启用消息输入
-            messageInput.disabled = false;
-            sendBtn.disabled = false;
+            socket.send(JSON.stringify(data));
+            // 立即显示自己发送的消息
+            addMessage(username, message, 'sent');
+            fullscreenInput.value = '';
+            fullscreenInput.focus();
         }
         
-        // 连接WebSocket
-        function connectWebSocket(address) {
-            if (!address) {
-                alert('请输入服务器地址');
+        // 连接服务器
+        function connect() {
+            let serverUrl = serverUrlInput.value.trim();
+            if (serverUrl.startsWith('https://')) {
+                serverUrl = serverUrl.replace('https://', 'wss://');
+            }
+            username = usernameInput.value.trim();
+            
+            if (!serverUrl) {
+                showNotification('请输入服务器地址', 'error');
                 return;
             }
             
-            if (!currentUser) {
-                alert('请先登录！');
+            if (!username) {
+                showNotification('请输入昵称', 'error');
                 return;
-            }
-            
-            // 更新状态为正在连接
-            statusText.textContent = '正在连接...';
-            statusDot.classList.add('connecting');
-            
-            // 禁用连接按钮
-            connectBtn.disabled = true;
-            
-            // 自动转换协议：https -> wss, http -> ws
-            let serverAddr = address;
-            if (serverAddr.startsWith('https://')) {
-                serverAddr = serverAddr.replace('https://', 'wss://');
-            } else if (serverAddr.startsWith('http://')) {
-                serverAddr = serverAddr.replace('http://', 'ws://');
-            }
-            
-            // 如果没有协议前缀，添加默认的ws://
-            if (!serverAddr.startsWith('ws://') && !serverAddr.startsWith('wss://')) {
-                serverAddr = 'ws://' + serverAddr;
             }
             
             try {
-                websocket = new WebSocket(serverAddr);
+                socket = new WebSocket(serverUrl);
                 
-                websocket.onopen = () => {
-                    statusDot.classList.remove('connecting');
-                    statusDot.classList.add('connected');
-                    statusText.textContent = '已连接';
-                    connectBtn.disabled = true;
-                    disconnectBtn.disabled = false;
-                    serverAddress.disabled = true;
+                socket.addEventListener('open', () => {
+                    connected = true;
+                    updateUI();
+                    showNotification('已连接到服务器', 'success');
                     
-                    // 简化系统消息 - 只显示一条连接成功消息
-                    addMessageToDisplay('system', '系统', `已成功连接到服务器，欢迎${currentUser.name}`);
+                    connectionStatus.classList.add('connected');
+                    connectionStatus.querySelector('span').textContent = '已连接';
+                    connectionInfo.textContent = `服务器: ${serverUrl}`;
                     
-                    // 发送用户信息
-                    const msg = {
-                        type: 'rename',
-                        name: currentUser.name
-                    };
-                    websocket.send(JSON.stringify(msg));
-                };
+                    connectBtn.innerHTML = '<i class="fas fa-plug"></i> 断开连接';
+                    
+                    // 发送初始昵称设置
+                    sendCommand('rename', { name: username });
+                    
+                    // 关闭连接面板
+                    closePanels();
+                });
                 
-                websocket.onmessage = (event) => {
-                    try {
-                        const data = JSON.parse(event.data);
-                        handleWebSocketMessage(data);
-                    } catch (e) {
-                        console.error('解析消息错误:', e);
-                        addMessageToDisplay('other', '服务器', event.data);
+                socket.addEventListener('message', handleMessage);
+                
+                socket.addEventListener('close', (event) => {
+                    connected = false;
+                    updateUI();
+                    
+                    // 检查是否被踢出
+                    if (event.reason === 'Kicked by server') {
+                        showNotification('你已被服务器踢出', 'error');
+                        // 被踢出后自动刷新页面
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        showNotification('已断开服务器连接', 'warning');
                     }
-                };
+                    
+                    connectionStatus.classList.remove('connected');
+                    connectionStatus.querySelector('span').textContent = '未连接';
+                    connectionInfo.textContent = '请连接服务器';
+                    
+                    connectBtn.innerHTML = '<i class="fas fa-plug"></i> 连接服务器';
+                });
                 
-                websocket.onclose = () => {
-                    statusDot.classList.remove('connected', 'connecting');
-                    statusText.textContent = '未连接';
-                    connectBtn.disabled = false;
-                    disconnectBtn.disabled = true;
-                    serverAddress.disabled = false;
-                    
-                    // 断开连接时移除所有用户（保留系统用户）
-                    const users = userList.querySelectorAll('.user-item');
-                    users.forEach(user => {
-                        if (!user.querySelector('.user-avatar').textContent.includes('S')) {
-                            user.remove();
-                        }
-                    });
-                    
-                    onlineCount.textContent = '0';
-                    
-                    // 添加断开连接消息
-                    addMessageToDisplay('system', '系统', '已断开与服务器的连接');
-                };
-                
-                websocket.onerror = (error) => {
-                    console.error('WebSocket错误:', error);
-                    addMessageToDisplay('system', '系统', '连接发生错误: ' + error.type);
-                    statusDot.classList.remove('connecting');
-                    
-                    // 启用连接按钮
-                    connectBtn.disabled = false;
-                };
-                
+                socket.addEventListener('error', () => {
+                    showNotification('连接服务器失败', 'error');
+                });
             } catch (error) {
-                console.error('连接错误:', error);
-                addMessageToDisplay('system', '系统', '连接失败: ' + error.message);
-                statusDot.classList.remove('connecting');
+                showNotification(`连接错误: ${error.message}`, 'error');
+            }
+        }
+        
+        // 断开连接
+        function disconnect() {
+            if (socket) {
+                socket.close();
+                socket = null;
+            }
+            connected = false;
+            updateUI();
+        }
+        
+        // 处理服务器消息
+        function handleMessage(event) {
+            try {
+                const data = JSON.parse(event.data);
                 
-                // 启用连接按钮
-                connectBtn.disabled = false;
-            }
-        }
-        
-        // 断开WebSocket连接
-        function disconnectWebSocket() {
-            if (websocket) {
-                websocket.close();
-            }
-        }
-        
-        // 处理WebSocket消息
-        function handleWebSocketMessage(data) {
-            switch (data.type) {
-                case 'welcome':
-                    currentClientId = data.your_id;
-                    // 简化系统消息 - 不再显示单独的欢迎消息
-                    if (data.users) {
-                        renderUserList(data.users);
-                    }
-                    break;
-                    
-                case 'system':
-                    // 过滤掉连接成功的重复消息
-                    if (!data.message.includes('连接成功')) {
-                        addMessageToDisplay('system', data.sender || '系统', data.message);
-                    }
-                    break;
-                    
-                case 'message':
-                    const isSelf = data.sender === currentClientId;
-                    addMessageToDisplay(isSelf ? 'self' : 'other', 
-                                       isSelf ? '我' : (data.sender_name || data.sender), 
-                                       data.message);
-                    break;
-                    
-                case 'userlist':
-                    renderUserList(data.users);
-                    break;
-                    
-                case 'nickname_change':
-                    if (data.userId !== currentUser?.id) {
-                        addMessageToDisplay('system', '系统', `用户 "${data.oldName}" 已将昵称更改为 "${data.newName}"`);
-                    }
-                    break;
-                    
-                case 'user_disconnected':
-                    // 从用户列表中移除断开连接的用户
-                    const userItems = userList.querySelectorAll('.user-item');
-                    userItems.forEach(item => {
-                        const nameElement = item.querySelector('.user-name span');
-                        if (nameElement && nameElement.textContent === data.userName) {
-                            item.remove();
+                switch (data.type) {
+                    case 'welcome':
+                        userId = data.your_id;
+                        addSystemMessage(data.message);
+                        updateUserList(data.users);
+                        break;
+                        
+                    case 'userlist':
+                        updateUserList(data.users);
+                        break;
+                        
+                    case 'message':
+                        // 不显示自己发送的消息（已经在发送时显示过了）
+                        if (data.sender !== userId) {
+                            addMessage(data.sender_name, data.message, 'received');
                         }
-                    });
-                    onlineCount.textContent = parseInt(onlineCount.textContent) - 1;
-                    break;
-                    
-                default:
-                    console.log('收到消息:', data);
-            }
-        }
-        
-        // 渲染用户列表（移除了"加入时间"显示）
-        function renderUserList(users) {
-            userList.innerHTML = '';
-            
-            // 添加系统用户
-            const systemUser = document.createElement('div');
-            systemUser.className = 'user-item';
-            systemUser.innerHTML = `
-                <div class="user-avatar">S</div>
-                <div class="user-info">
-                    <div class="user-name">
-                        <span>系统</span>
-                        <span class="status-dot connected"></span>
-                    </div>
-                    <div class="user-status">在线服务</div>
-                </div>
-            `;
-            userList.appendChild(systemUser);
-            
-            // 添加真实用户
-            users.forEach(user => {
-                const userItem = document.createElement('div');
-                userItem.className = 'user-item';
-                
-                let gameStatus = '';
-                if (user.game_status && user.game_status !== 'none') {
-                    gameStatus = `<div class="game-status">${getGameName(user.game_status)}</div>`;
+                        break;
+                        
+                    case 'system':
+                        addSystemMessage(data.message);
+                        break;
                 }
-                
-                // 修改：所有用户都显示在线状态（绿点）
-                const statusClass = 'connected';
-                
-                // 移除了"加入时间"显示
-                userItem.innerHTML = `
-                    <div class="user-avatar">${user.name.charAt(0).toUpperCase()}</div>
-                    <div class="user-info">
-                        <div class="user-name">
-                            <span>${user.name}</span>
-                            <span class="status-dot ${statusClass}"></span>
-                        </div>
-                        ${gameStatus}
-                    </div>
-                `;
-                userList.appendChild(userItem);
-            });
-            
-            onlineCount.textContent = users.length;
-        }
-        
-        // 获取游戏名称
-        function getGameName(gameType) {
-            switch (gameType) {
-                case 'waiting_ttt': return '等待井字棋';
-                case 'playing_ttt': return '井字棋中';
-                case 'playing_liar': return 'Liar游戏中';
-                default: return '游戏中';
+            } catch (error) {
+                console.error('解析消息错误:', error);
             }
         }
         
         // 发送消息
         function sendMessage() {
-            const content = messageInput.value.trim();
-            if (!content || !websocket || websocket.readyState !== WebSocket.OPEN) return;
+            const message = messageInput.value.trim();
+            if (!message || !socket) return;
             
-            // 构建消息
-            const msg = {
+            const data = {
                 type: 'message',
-                content: content
+                content: message
             };
             
-            // 发送消息
-            websocket.send(JSON.stringify(msg));
-            
-            // 清空输入框
+            socket.send(JSON.stringify(data));
+            // 立即显示自己发送的消息
+            addMessage(username, message, 'sent');
             messageInput.value = '';
+            messageInput.focus();
         }
         
-        // 处理按键事件
-        function handleKeyDown(e) {
-            if (e.key === 'Enter' && !e.ctrlKey && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            } else if (e.key === 'Enter' && e.ctrlKey) {
-                // 允许Ctrl+Enter换行
-                const start = messageInput.selectionStart;
-                const end = messageInput.selectionEnd;
-                messageInput.value = messageInput.value.substring(0, start) + '\n' + messageInput.value.substring(end);
-                messageInput.selectionStart = messageInput.selectionEnd = start + 1;
-            }
+        // 发送命令
+        function sendCommand(type, payload = {}) {
+            if (!socket) return;
+            
+            const data = {
+                type: type,
+                ...payload
+            };
+            
+            socket.send(JSON.stringify(data));
         }
         
-        // 添加消息到显示区
-        function addMessageToDisplay(messageType, sender, content, customTime) {
-            const messageElement = document.createElement('div');
-            messageElement.className = `message ${messageType}-message`;
+        // 添加消息到聊天框（同时更新两个视图）
+        function addMessage(sender, text, type) {
+            // 为主聊天窗口添加消息
+            addMessageToContainer(sender, text, type, chatMessages);
             
-            const time = customTime || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            // 为全屏聊天窗口添加消息
+            addMessageToContainer(sender, text, type, fullscreenMessages);
+        }
+        
+        // 添加消息到指定容器
+        function addMessageToContainer(sender, text, type, container) {
+            const messageContainer = document.createElement('div');
+            messageContainer.classList.add('message-container', type);
             
-            let senderDisplay = sender;
-            if (messageType === 'self') senderDisplay = '我';
+            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             
-            messageElement.innerHTML = `
-                <div class="message-sender">${senderDisplay}</div>
-                <div class="message-content">${content}</div>
-                <div class="message-time">${time}</div>
+            messageContainer.innerHTML = `
+                <div class="message-sender">${sender}</div>
+                <div class="message-bubble">
+                    <div class="message-text">${text}</div>
+                    <div class="message-time">${timestamp}</div>
+                </div>
             `;
             
-            messageDisplay.appendChild(messageElement);
-            
-            // 滚动到底部
-            messageDisplay.scrollTop = messageDisplay.scrollHeight;
+            container.appendChild(messageContainer);
+            container.scrollTop = container.scrollHeight;
         }
         
-        // 设置相关功能
-        function toggleSettings() {
-            settingsCard.style.display = settingsCard.style.display === 'block' ? 'none' : 'block';
+        // 添加系统消息（同时更新两个视图）
+        function addSystemMessage(text) {
+            // 为主聊天窗口添加系统消息
+            addSystemMessageToContainer(text, chatMessages);
+            
+            // 为全屏聊天窗口添加系统消息
+            addSystemMessageToContainer(text, fullscreenMessages);
         }
         
-        function handleBackgroundImage(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+        // 添加系统消息到指定容器
+        function addSystemMessageToContainer(text, container) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', 'message-system');
+            messageElement.textContent = text;
             
-            // 清空错误信息
-            bgError.style.display = 'none';
-            bgError.textContent = '';
+            container.appendChild(messageElement);
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        // 更新用户列表
+        function updateUserList(users) {
+            usersList.innerHTML = '';
+            userCount.textContent = users.length;
             
-            // 检查文件大小（最大4MB）
-            const maxSize = 4 * 1024 * 1024; // 4MB
-            if (file.size > maxSize) {
-                bgError.textContent = '图片过大，请选择小于4MB的文件';
-                bgError.style.display = 'block';
+            if (users.length === 0) {
+                const item = document.createElement('li');
+                item.textContent = '暂无在线用户';
+                usersList.appendChild(item);
                 return;
             }
             
-            // 检查文件类型
-            const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-            if (!validTypes.includes(file.type)) {
-                bgError.textContent = '不支持的图片格式，请选择JPEG、PNG、GIF或WebP';
-                bgError.style.display = 'block';
-                return;
-            }
-            
-            try {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    bgPreview.style.backgroundImage = `url(${event.target.result})`;
-                };
-                reader.readAsDataURL(file);
-            } catch (error) {
-                bgError.textContent = '图片读取失败: ' + error.message;
-                bgError.style.display = 'block';
-                console.error('背景图片处理错误:', error);
-            }
-        }
-        
-        function saveSettings() {
-            // 保存背景图片
-            const file = bgImageInput.files[0];
-            if (file) {
-                try {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        localStorage.setItem('backgroundImage', event.target.result);
-                        document.body.style.backgroundImage = `url(${event.target.result})`;
-                        document.body.style.backgroundSize = 'cover';
-                        document.body.style.backgroundAttachment = 'fixed';
-                        document.body.style.animation = 'none';
-                        
-                        // 关闭设置面板
-                        settingsCard.style.display = 'none';
-                        
-                        // 提示设置已保存
-                        addMessageToDisplay('system', '系统', '背景设置已保存');
-                    };
-                    reader.readAsDataURL(file);
-                } catch (error) {
-                    bgError.textContent = '背景设置失败: ' + error.message;
-                    bgError.style.display = 'block';
-                    console.error('保存背景图片失败:', error);
-                }
-            } else {
-                // 如果没有选择新图片，检查是否有已保存的图片
-                const savedBg = localStorage.getItem('backgroundImage');
-                if (savedBg) {
-                    document.body.style.backgroundImage = `url(${savedBg})`;
-                    document.body.style.backgroundSize = 'cover';
-                    document.body.style.backgroundAttachment = 'fixed';
-                    document.body.style.animation = 'none';
-                }
+            users.forEach(user => {
+                const item = document.createElement('li');
+                const firstLetter = user.name.charAt(0).toUpperCase();
                 
-                // 关闭设置面板
-                settingsCard.style.display = 'none';
-            }
+                // 确保状态有默认值
+                const status = user.status || '在线';
+                
+                item.innerHTML = `
+                    <div class="user-avatar">${firstLetter}</div>
+                    <div class="user-info">
+                        <div class="user-name">${user.name}</div>
+                        <div class="user-status">
+                            <span class="status-indicator"></span>
+                            ${status}
+                        </div>
+                    </div>
+                `;
+                
+                usersList.appendChild(item);
+            });
         }
         
-        function resetSettings() {
-            // 清除背景设置
-            localStorage.removeItem('backgroundImage');
-            document.body.style.backgroundImage = '';
-            document.body.style.animation = 'gradientBG 15s ease infinite';
-            
-            // 重置预览
-            bgPreview.style.backgroundImage = '';
-            bgImageInput.value = '';
-            
-            // 隐藏错误信息
-            bgError.style.display = 'none';
-            
-            // 提示设置已恢复
-            addMessageToDisplay('system', '系统', '设置已恢复为初始状态，请刷新网页并重新登录');
-            
-            // 关闭设置面板
-            settingsCard.style.display = 'none';
+        // 更新UI状态
+        function updateUI() {
+            messageInput.disabled = !connected;
+            sendBtn.disabled = !connected;
+            newUsernameInput.disabled = !connected;
+            fullscreenInput.disabled = !connected;
+            fullscreenSendBtn.disabled = !connected;
         }
         
-        function cancelSettings() {
-            // 恢复原始设置预览
-            const savedBg = localStorage.getItem('backgroundImage');
-            if (savedBg) {
-                bgPreview.style.backgroundImage = `url(${savedBg})`;
-            } else {
-                bgPreview.style.backgroundImage = '';
-            }
+        // 显示通知
+        function showNotification(text, type) {
+            notification.textContent = text;
+            notification.className = `notification ${type} show`;
             
-            // 重置文件输入
-            bgImageInput.value = '';
-            
-            // 隐藏错误信息
-            bgError.style.display = 'none';
-            
-            settingsCard.style.display = 'none';
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
         }
         
+        // 加载保存的设置
         function loadSettings() {
+            // 加载深色模式设置
+            const darkMode = localStorage.getItem('darkMode');
+            if (darkMode === 'true') {
+                document.body.classList.add('dark-theme');
+                themeToggle.querySelector('i').classList.replace('fa-moon', 'fa-sun');
+                themeText.textContent = '浅色模式';
+            } else {
+                themeText.textContent = '深色模式';
+            }
+            
+            // 加载主题颜色
+            const themeColor = localStorage.getItem('themeColor');
+            if (themeColor) {
+                document.documentElement.style.setProperty('--primary-color', themeColor);
+                document.documentElement.style.setProperty('--secondary-color', themeColor);
+            }
+            
             // 加载背景图片
-            const savedBg = localStorage.getItem('backgroundImage');
-            if (savedBg) {
-                document.body.style.backgroundImage = `url(${savedBg})`;
+            const bgImage = localStorage.getItem('bgImage');
+            if (bgImage) {
+                document.body.style.backgroundImage = `url(${bgImage})`;
                 document.body.style.backgroundSize = 'cover';
                 document.body.style.backgroundAttachment = 'fixed';
-                document.body.style.animation = 'none';
-                bgPreview.style.backgroundImage = `url(${savedBg})`;
             }
+            
+            // 加载用户名
+            const savedUsername = localStorage.getItem('username');
+            if (savedUsername) {
+                loginUsernameInput.value = savedUsername;
+                usernameInput.value = savedUsername;
+            }
+        }
+        
+        // 初始化
+        function init() {
+            // 设置默认服务器地址提示
+            serverUrlInput.placeholder = '例如: ws://localhost:8765';
+            loginServerUrlInput.placeholder = '例如: ws://localhost:8765';
+            updateUI();
+            
+            // 添加初始欢迎消息
+            addSystemMessage('欢迎加入Y.S Chat！连接服务器后开始聊天。');
+            
+            // 生成随机昵称
+            const nouns = ['用户', '访客', '成员', '朋友'];
+            const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+            const randomNumber = Math.floor(Math.random() * 90) + 10;
+            
+            // 优先使用保存的用户名
+            const savedUsername = localStorage.getItem('username');
+            if (!savedUsername) {
+                loginUsernameInput.value = `${randomNoun}${randomNumber}`;
+                usernameInput.value = `${randomNoun}${randomNumber}`;
+            }
+            
+            // 加载保存的设置
+            loadSettings();
         }
         
         // 页面加载完成后初始化
-        window.addEventListener('DOMContentLoaded', initPage);
+        window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
