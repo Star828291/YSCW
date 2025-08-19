@@ -401,7 +401,7 @@
             color: white;
             font-weight: 500;
             box-shadow: var(--shadow);
-            z-index: 1000;
+            z-index: 10000; /* 提高层级 */
             opacity: 0;
             transform: translateX(100%);
             transition: all 0.4s ease;
@@ -657,6 +657,7 @@
             display: none;
             flex-direction: column;
             padding: 20px;
+            background: inherit; /* 继承body背景 */
         }
         
         .fullscreen-header {
@@ -961,8 +962,7 @@
                 主题设置
             </h2>
             <button class="btn" id="themeToggle">
-                <i class="fas fa-moon"></i>
-                <span id="themeText">深色模式</span>
+                <span id="themeText">深色模式：关</span>
             </button>
             
             <div class="form-group" style="margin-top: 20px;">
@@ -1140,15 +1140,12 @@
         // 切换深色/浅色模式
         themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('dark-theme');
-            const icon = themeToggle.querySelector('i');
             
             if (document.body.classList.contains('dark-theme')) {
-                icon.classList.replace('fa-moon', 'fa-sun');
-                themeText.textContent = '深色模式';
+                themeText.textContent = '深色模式：开';
                 localStorage.setItem('darkMode', 'true');
             } else {
-                icon.classList.replace('fa-sun', 'fa-moon');
-                themeText.textContent = '浅色模式';
+                themeText.textContent = '深色模式：关';
                 localStorage.setItem('darkMode', 'false');
             }
             
@@ -1492,7 +1489,7 @@
             
             setTimeout(() => {
                 notification.classList.remove('show');
-            }, 3000);
+            }, 5000); // 显示7秒
         }
         
         // 加载保存的设置
@@ -1501,10 +1498,9 @@
             const darkMode = localStorage.getItem('darkMode');
             if (darkMode === 'true') {
                 document.body.classList.add('dark-theme');
-                themeToggle.querySelector('i').classList.replace('fa-moon', 'fa-sun');
-                themeText.textContent = '浅色模式';
+                themeText.textContent = '深色模式：开';
             } else {
-                themeText.textContent = '深色模式';
+                themeText.textContent = '深色模式：关';
             }
             
             // 加载主题颜色
