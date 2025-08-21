@@ -43,8 +43,6 @@
         }
         
         .dark-theme {
-            --primary-color: #5e72e4;
-            --secondary-color: #4a56c9;
             --bg-color: #1a1d28;
             --card-bg: #252a3a;
             --text-color: #f0f0f0;
@@ -267,6 +265,9 @@
         .user-name {
             font-weight: 600;
             margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .user-status {
@@ -490,11 +491,46 @@
             cursor: pointer;
             border: 2px solid transparent;
             transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
         }
         
         .color-option:hover, .color-option.active {
             transform: scale(1.1);
             border-color: var(--text-color);
+        }
+        
+        .custom-color-panel {
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            display: none;
+        }
+        
+        .custom-color-panel.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .custom-color-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .custom-color-input input {
+            flex: 1;
+            height: 40px;
+        }
+        
+        .custom-color-input button {
+            width: auto;
+            min-width: 80px;
         }
         
         .overlay {
@@ -678,6 +714,16 @@
             color: var(--primary-color);
         }
         
+        .fullscreen-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .fullscreen-controls .btn {
+            width: auto;
+            padding: 10px 15px;
+        }
+        
         .fullscreen-messages {
             flex: 1;
             overflow-y: auto;
@@ -706,9 +752,6 @@
         
         /* 优化退出全屏按钮 */
         #exitFullscreenBtn {
-            position: absolute;
-            top: 0;
-            right: 0;
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -732,6 +775,28 @@
         #exitFullscreenBtn:focus {
             outline: none;
             box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.4);
+        }
+        
+        /* 全屏设置按钮 */
+        #fullscreenSettingsBtn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            background: var(--info-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        #fullscreenSettingsBtn:hover {
+            background: #0b7dda;
+            transform: scale(1.1);
         }
         
         @media (max-width: 900px) {
@@ -792,6 +857,10 @@
             
             .login-panel h2 {
                 font-size: 1.5rem;
+            }
+            
+            .fullscreen-controls {
+                flex-direction: row;
             }
         }
     </style>
@@ -891,9 +960,14 @@
                 <i class="fas fa-comments"></i>
                 <span>Y.S Chat</span>
             </div>
-            <button class="btn" id="exitFullscreenBtn" title="退出全屏模式">
-                <i class="fas fa-compress"></i>
-            </button>
+            <div class="fullscreen-controls">
+                <button class="btn" id="fullscreenSettingsBtn" title="设置">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <button class="btn" id="exitFullscreenBtn" title="退出全屏模式">
+                    <i class="fas fa-compress"></i>
+                </button>
+            </div>
         </div>
         <div class="fullscreen-messages" id="fullscreenMessages"></div>
         <div class="fullscreen-form">
@@ -973,6 +1047,21 @@
                     <div class="color-option" style="background: #f44336;" data-color="#f44336"></div>
                     <div class="color-option" style="background: #ff9800;" data-color="#ff9800"></div>
                     <div class="color-option" style="background: #9c27b0;" data-color="#9c27b0"></div>
+                    <div class="color-option" id="customColorTrigger" style="background: #6c757d;">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                </div>
+                
+                <!-- 自定义颜色面板 -->
+                <div class="custom-color-panel" id="customColorPanel">
+                    <label for="customColorInput">自定义颜色</label>
+                    <div class="custom-color-input">
+                        <input type="color" id="customColorInput">
+                        <button class="btn" id="applyCustomColor">
+                            <i class="fas fa-check"></i>
+                            应用
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1033,6 +1122,11 @@
         const fullscreenMessages = document.getElementById('fullscreenMessages');
         const fullscreenInput = document.getElementById('fullscreenInput');
         const fullscreenSendBtn = document.getElementById('fullscreenSendBtn');
+        const fullscreenSettingsBtn = document.getElementById('fullscreenSettingsBtn');
+        const customColorTrigger = document.getElementById('customColorTrigger');
+        const customColorPanel = document.getElementById('customColorPanel');
+        const customColorInput = document.getElementById('customColorInput');
+        const applyCustomColor = document.getElementById('applyCustomColor');
         
         // WebSocket连接
         let socket = null;
@@ -1126,6 +1220,17 @@
             overlay.classList.add('show');
         });
         
+        // 全屏模式设置按钮
+        fullscreenSettingsBtn.addEventListener('click', () => {
+            // 退出全屏
+            fullscreenChat.style.display = 'none';
+            mainContainer.style.display = 'block';
+            
+            // 打开设置面板
+            settingsPanel.classList.add('show');
+            overlay.classList.add('show');
+        });
+        
         // 关闭设置面板
         closeSettings.addEventListener('click', closePanels);
         closeConnect.addEventListener('click', closePanels);
@@ -1154,26 +1259,50 @@
         
         // 更换主题颜色
         colorOptions.forEach(option => {
-            option.addEventListener('click', () => {
+            option.addEventListener('click', (e) => {
+                // 防止点击自定义颜色触发按钮时触发颜色选项
+                if (option.id === 'customColorTrigger') return;
+                
                 const color = option.getAttribute('data-color');
-                document.documentElement.style.setProperty('--primary-color', color);
-                document.documentElement.style.setProperty('--secondary-color', color);
-                localStorage.setItem('themeColor', color);
-                
-                // 更新按钮上的颜色
-                const buttons = document.querySelectorAll('.btn:not(.btn-danger):not(.btn-success)');
-                buttons.forEach(btn => {
-                    btn.style.background = color;
-                });
-                
-                // 更新浅色模式背景（如果没有背景图片）
-                if (!localStorage.getItem('bgImage') && !document.body.classList.contains('dark-theme')) {
-                    document.body.style.backgroundImage = `linear-gradient(135deg, ${color}20 0%, ${adjustColor(color, -20)}20 100%)`;
-                }
-                
+                applyThemeColor(color);
                 showNotification('主题颜色已更换', 'success');
             });
         });
+        
+        // 自定义颜色触发器
+        customColorTrigger.addEventListener('click', () => {
+            customColorPanel.classList.toggle('show');
+        });
+        
+        // 应用自定义颜色
+        applyCustomColor.addEventListener('click', () => {
+            const color = customColorInput.value;
+            applyThemeColor(color);
+            customColorPanel.classList.remove('show');
+            showNotification('自定义颜色已应用', 'success');
+        });
+        
+        // 应用主题颜色
+        function applyThemeColor(color) {
+            document.documentElement.style.setProperty('--primary-color', color);
+            
+            // 计算并设置较深的颜色作为次要颜色
+            const darkerColor = adjustColor(color, -20);
+            document.documentElement.style.setProperty('--secondary-color', darkerColor);
+            
+            localStorage.setItem('themeColor', color);
+            
+            // 更新按钮上的颜色
+            const buttons = document.querySelectorAll('.btn:not(.btn-danger):not(.btn-success)');
+            buttons.forEach(btn => {
+                btn.style.background = color;
+            });
+            
+            // 更新浅色模式背景（如果没有背景图片）
+            if (!localStorage.getItem('bgImage') && !document.body.classList.contains('dark-theme')) {
+                document.body.style.backgroundImage = `linear-gradient(135deg, ${color}20 0%, ${darkerColor}20 100%)`;
+            }
+        }
         
         // 辅助函数：调整颜色亮度
         function adjustColor(hex, percent) {
@@ -1506,8 +1635,7 @@
             // 加载主题颜色
             const themeColor = localStorage.getItem('themeColor');
             if (themeColor) {
-                document.documentElement.style.setProperty('--primary-color', themeColor);
-                document.documentElement.style.setProperty('--secondary-color', themeColor);
+                applyThemeColor(themeColor);
             }
             
             // 加载背景图片
@@ -1534,7 +1662,7 @@
             updateUI();
             
             // 添加初始欢迎消息
-            addSystemMessage('欢迎加入Y.S Chat！连接服务器后开始聊天。');
+            addSystemMessage('欢迎加入Y.S Chat！连接服务器后开始聊天');
             
             // 生成随机昵称
             const nouns = ['用户', '访客', '成员', '朋友'];
