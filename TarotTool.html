@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>塔罗牌</title>
+    <style>
+        :root {
+            --primary-color: #6d5dca;
+            --secondary-color: #a293e6;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --text-secondary: #6c757d;
+            --border-color: #e0e0e0;
+            --success-color: #4caf50;
+            --error-color: #f44336;
+            --warning-color: #ff9800;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #e4e7ec 100%);
+            display: flex;
+            flex-direction: column;
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            opacity: 0.9;
+        }
+
+        .question-section {
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .question-section h2 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+            margin-bottom: 15px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+        }
+
+        .btn-primary:disabled {
+            background: var(--border-color);
+            cursor: not-allowed;
+        }
+
+        .cards-section {
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+        }
+
+        .card {
+            background: #f0f0f0;
+            border-radius: 8px;
+            aspect-ratio: 2/3;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: all 0.5s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 10px;
+        }
+
+        .card.upright {
+            background: #ccffcc;
+        }
+
+        .card.reversed {
+            background: #ffcccc;
+        }
+
+        .card-name {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .card-position {
+            font-size: 0.9rem;
+        }
+
+        .result-section {
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .result-section h2 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .explanation {
+            background: #f8f8f8;
+            border-radius: 8px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            line-height: 1.8;
+            white-space: pre-line;
+        }
+
+        .status-bar {
+            padding: 15px;
+            background: #f0f0f0;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        @media (max-width: 900px) {
+            .cards-section {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .cards-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>塔罗牌</h1>
+        <p>输入问题，点击开始抽取按钮</p>
+    </header>
+    
+    <div class="question-section">
+        <h2><i class="fas fa-question-circle"></i>问题</h2>
+        <textarea id="questionInput" placeholder="请输入想要询问塔罗牌的问题..."></textarea>
+        <div class="button-group">
+            <button id="drawButton" class="btn-primary">
+                <i class="fas fa-star"></i>
+                开始抽取
+            </button>
+        </div>
+    </div>
+    
+    <div class="cards-section" id="cardsContainer">
+        <!-- 卡片将由JavaScript动态生成 -->
+    </div>
+    
+    <div class="result-section">
+        <h2><i class="fas fa-book-open"></i>结果</h2>
+        <div id="explanation" class="explanation">
+            请输入问题并点击"开始抽取"按钮
+        </div>
+    </div>
+    
+    <div class="status-bar" id="statusBar">
+        准备就绪
+    </div>
+
+    <script>
+        // 塔罗牌数据 - 大阿卡纳
+        const MAJOR_ARCANA = [
+            {"name": "愚者", "meaning": "新的开始、冒险、天真", "reverse": "鲁莽、冒险失败、幼稚"},
+            {"name": "魔术师", "meaning": "创造力、意志力、技能", "reverse": "欺骗、犹豫不决、能量浪费"},
+            {"name": "女祭司", "meaning": "直觉、潜意识、神秘", "reverse": "隐藏的动机、表面平静、压抑"},
+            {"name": "皇后", "meaning": "丰饶、母性、自然", "reverse": "过度依赖、缺乏成长、不安全感"},
+            {"name": "皇帝", "meaning": "权威、结构、控制", "reverse": "僵化、控制欲过强、滥用权力"},
+            {"name": "教皇", "meaning": "传统、精神指引、信仰", "reverse": "反叛、打破常规、新方法"},
+            {"name": "恋人", "meaning": "关系、选择、和谐", "reverse": "失衡、错误选择、冲突"},
+            {"name": "战车", "meaning": "意志力、胜利、自我控制", "reverse": "失控、失败、缺乏方向"},
+            {"name": "力量", "meaning": "勇气、内在力量、耐心", "reverse": "自我怀疑、软弱、失去信心"},
+            {"name": "隐者", "meaning": "内省、寻求真理、孤独", "reverse": "孤立、拒绝帮助、固执"},
+            {"name": "命运之轮", "meaning": "命运、转折点、机会", "reverse": "坏运气、阻力、无法控制"},
+            {"name": "正义", "meaning": "公正、真相、平衡", "reverse": "不公、偏见、责任逃避"},
+            {"name": "倒吊人", "meaning": "牺牲、新视角、等待", "reverse": "无谓牺牲、拖延、逃避"},
+            {"name": "死神", "meaning": "结束、转变、新生", "reverse": "抗拒改变、停滞、恐惧"},
+            {"name": "节制", "meaning": "平衡、调和、耐心", "reverse": "失衡、极端、缺乏协调"},
+            {"name": "恶魔", "meaning": "束缚、物质主义、欲望", "reverse": "解脱、克服欲望、精神自由"},
+            {"name": "高塔", "meaning": "剧变、启示、崩塌", "reverse": "避免灾难、害怕改变、压抑"},
+            {"name": "星星", "meaning": "希望、灵感、宁静", "reverse": "绝望、失去信心、悲观"},
+            {"name": "月亮", "meaning": "幻觉、恐惧、潜意识", "reverse": "释放恐惧、理解幻觉、内在平静"},
+            {"name": "太阳", "meaning": "喜悦、成功、活力", "reverse": "暂时的成功、过度乐观、挫折"},
+            {"name": "审判", "meaning": "觉醒、重生、内省", "reverse": "自我怀疑、拒绝召唤、内疚"},
+            {"name": "世界", "meaning": "完成、成就、旅行", "reverse": "未完成、缺乏结束、需要反思"}
+        ];
+
+        // DOM元素
+        const questionInput = document.getElementById('questionInput');
+        const drawButton = document.getElementById('drawButton');
+        const cardsContainer = document.getElementById('cardsContainer');
+        const explanation = document.getElementById('explanation');
+        const statusBar = document.getElementById('statusBar');
+
+        // 初始化卡片占位符
+        function initializeCards() {
+            cardsContainer.innerHTML = '';
+            for (let i = 0; i < 5; i++) {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'card';
+                cardElement.innerHTML = `
+                    <div class="card-content">卡片 ${i+1}</div>
+                    <div class="card-name">等待抽取</div>
+                    <div class="card-position"></div>
+                `;
+                cardsContainer.appendChild(cardElement);
+            }
+        }
+
+        // 抽取塔罗牌
+        async function drawCards() {
+            const question = questionInput.value.trim();
+            if (!question) {
+                alert('请先输入您的问题');
+                return;
+            }
+
+            // 更新状态
+            statusBar.textContent = '正在抽取塔罗牌...';
+            drawButton.disabled = true;
+            explanation.textContent = '';
+
+            // 清空之前的结果
+            initializeCards();
+
+            // 模拟抽取过程
+            const selectedCards = [];
+            const availableCards = [...MAJOR_ARCANA];
+
+            for (let i = 0; i < 5; i++) {
+                if (availableCards.length === 0) break;
+
+                // 随机选择一张牌并确定正逆位
+                const randomIndex = Math.floor(Math.random() * availableCards.length);
+                const card = availableCards[randomIndex];
+                const isReversed = Math.random() > 0.5;
+                
+                const cardData = {
+                    index: i,
+                    name: card.name,
+                    meaning: isReversed ? card.reverse : card.meaning,
+                    position: isReversed ? "逆位" : "正位",
+                    isReversed: isReversed
+                };
+                
+                selectedCards.push(cardData);
+                
+                // 从可用牌中移除这张牌
+                availableCards.splice(randomIndex, 1);
+                
+                // 更新UI
+                updateCardUI(i, cardData);
+                
+                // 增加抽取的仪式感
+                await new Promise(resolve => setTimeout(resolve, 800));
+            }
+
+            // 生成解释文本 - 使用换行符
+            let explanationText = `您的问题: ${question}\n\n`;
+            explanationText += "塔罗牌解读:\n";
+            
+            selectedCards.forEach((card, index) => {
+                explanationText += `${index+1}. ${card.name} (${card.position}): ${card.meaning}\n`;
+            });
+            
+            explanationText += "整体解读:\n"
+            explanationText += "这组牌表明您正处于一个转折点。前两张牌代表当前的挑战，中间一张是核心问题，最后两张是潜在结果。\n";
+            explanationText += "正位牌显示积极能量，逆位牌则提示需要注意的方面。请结合您的问题深入思考这些启示。";
+            
+            // 更新解释区域
+            explanation.textContent = explanationText;
+            
+            // 更新状态
+            statusBar.textContent = '塔罗牌抽取完成!';
+            drawButton.disabled = false;
+        }
+
+        // 更新卡片UI
+        function updateCardUI(index, cardData) {
+            const cardElements = cardsContainer.querySelectorAll('.card');
+            const cardElement = cardElements[index];
+            
+            // 清除现有类
+            cardElement.classList.remove('upright', 'reversed');
+            
+            // 添加正逆位类
+            if (cardData.isReversed) {
+                cardElement.classList.add('reversed');
+            } else {
+                cardElement.classList.add('upright');
+            }
+            
+            // 更新内容
+            cardElement.innerHTML = `
+                <div class="card-content">${cardData.name}</div>
+                <div class="card-name">${cardData.name}</div>
+                <div class="card-position" style="color: ${cardData.isReversed ? 'red' : 'green'}">${cardData.position}</div>
+            `;
+        }
+
+        // 事件监听
+        drawButton.addEventListener('click', drawCards);
+
+        // 初始化页面
+        initializeCards();
+    </script>
+
+    <!-- Font Awesome 图标 -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>
