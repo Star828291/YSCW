@@ -799,6 +799,32 @@
             transform: scale(1.1);
         }
         
+        /* 被踢出全屏界面 */
+        .kicked-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            text-align: center;
+        }
+        
+        .kicked-overlay h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .kicked-overlay p {
+            font-size: 1.5rem;
+        }
+        
         @media (max-width: 900px) {
             .flex-container {
                 flex-direction: column;
@@ -861,6 +887,14 @@
             
             .fullscreen-controls {
                 flex-direction: row;
+            }
+            
+            .kicked-overlay h1 {
+                font-size: 2rem;
+            }
+            
+            .kicked-overlay p {
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -977,6 +1011,12 @@
                 发送
             </button>
         </div>
+    </div>
+    
+    <!-- 被踢出界面 -->
+    <div id="kickedOverlay" class="kicked-overlay">
+        <h1>你已被踢出</h1>
+        <p><span id="countdown">10</span>秒后网页自动刷新</p>
     </div>
     
     <div class="overlay" id="overlay"></div>
@@ -1127,12 +1167,15 @@
         const customColorPanel = document.getElementById('customColorPanel');
         const customColorInput = document.getElementById('customColorInput');
         const applyCustomColor = document.getElementById('applyCustomColor');
+        const kickedOverlay = document.getElementById('kickedOverlay');
+        const countdownElement = document.getElementById('countdown');
         
         // WebSocket连接
         let socket = null;
         let connected = false;
         let userId = null;
         let username = '';
+        let countdownInterval = null;
         
         // 登录按钮事件
         loginBtn.addEventListener('click', () => {
@@ -1426,11 +1469,8 @@
                     
                     // 检查是否被踢出
                     if (event.reason === 'Kicked by server') {
-                        showNotification('你已被服务器踢出', 'error');
-                        // 被踢出后自动刷新页面
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 2000);
+                        // 显示被踢出界面
+                        showKickedOverlay();
                     } else {
                         showNotification('已断开服务器连接', 'warning');
                     }
@@ -1458,6 +1498,36 @@
             }
             connected = false;
             updateUI();
+        }
+        
+        // 显示被踢出界面
+        function showKickedOverlay() {
+            // 隐藏所有其他界面
+            mainContainer.style.display = 'none';
+            fullscreenChat.style.display = 'none';
+            loginOverlay.style.display = 'none';
+            
+            // 显示被踢出界面
+            kickedOverlay.style.display = 'flex';
+            
+            // 开始倒计时
+            let countdown = 10;
+            countdownElement.textContent = countdown;
+            
+            // 清除之前的倒计时（如果有）
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            
+            countdownInterval = setInterval(() => {
+                countdown--;
+                countdownElement.textContent = countdown;
+                
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    window.location.reload();
+                }
+            }, 1000);
         }
         
         // 处理服务器消息
