@@ -11,7 +11,8 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* 修改为系统字体栈，适配苹果及其他设备 */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
         
         :root {
@@ -92,6 +93,10 @@
             background-clip: text;
             color: transparent;
         }
+        
+        /* 标题切换：长标题和短标题 */
+        .full-title { display: inline; }
+        .short-title { display: none; }
         
         .header-connection-status {
             display: flex;
@@ -720,6 +725,11 @@
             color: var(--primary-color);
         }
         
+        /* 全屏标题加粗 */
+        .fullscreen-title span {
+            font-weight: bold;
+        }
+        
         .fullscreen-controls {
             display: flex;
             gap: 10px;
@@ -887,7 +897,7 @@
             background: rgba(0, 0, 0, 0.03);
             border-radius: var(--border-radius);
             padding: 20px;
-            font-family: 'Courier New', monospace;
+            /* 移除等宽字体，使用系统字体 */
             white-space: pre-line;
             line-height: 1.8;
             border-left: 4px solid var(--primary-color);
@@ -980,6 +990,18 @@
             .kicked-overlay p {
                 font-size: 1.2rem;
             }
+            
+            /* 小屏幕：切换为短标题，按钮只显示图标，连接状态只显示点 */
+            .full-title { display: none; }
+            .short-title { display: inline; }
+            
+            .theme-controls .theme-btn span {
+                display: none;
+            }
+            
+            .header-connection-status span {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -1012,7 +1034,10 @@
             <div class="header-left">
                 <div class="logo">
                     <i class="fas fa-comments"></i>
-                    <h1>Y.Server Chat</h1>
+                    <h1>
+                        <span class="full-title">Y.Server Chat</span>
+                        <span class="short-title">Y.S Chat</span>
+                    </h1>
                 </div>
                 <div class="header-connection-status" id="headerConnectionStatus">
                     <div class="header-status-dot"></div>
@@ -1815,7 +1840,7 @@ Netlify：域名支持
             
             setTimeout(() => {
                 notification.classList.remove('show');
-            }, 5000); // 显示7秒
+            }, 5000); // 显示5秒
         }
         
         // 加载保存的设置
