@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>🍀 生日快乐</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif;
+            background: #0b1f18;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            background: radial-gradient(ellipse at 40% 20%, #3d5243 0%, #1f2e23 45%, #151f18 90%);
+            color: #e2f0e2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            position: relative;
+            transition: background 0.5s ease;
+        }
+
+        /* 柔和星光背景（淡暖绿） */
+        .stars-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: #dce8dc;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #bccfbc, 0 0 16px #8aaa8a;
+            animation: twinkle 7s infinite ease-in-out;
+            opacity: 0.5;
+        }
+
+        @keyframes twinkle {
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            25% {
+                opacity: 0.7;
+                transform: scale(1.35);
+            }
+            50% {
+                opacity: 0.45;
+                transform: scale(0.88);
+            }
+            75% {
+                opacity: 0.65;
+                transform: scale(1.15);
+            }
+        }
+
+        /* 飘落的柔和叶子 */
+        .falling-leaves {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .leaf {
+            position: absolute;
+            font-size: 1.4rem;
+            opacity: 0.4;
+            animation: fall linear infinite;
+            user-select: none;
+            text-shadow: 0 0 8px #8db88d;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg) scale(0.75);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.45;
+            }
+            90% {
+                opacity: 0.55;
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg) scale(1.05);
+                opacity: 0;
+            }
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 5;
+        }
+
+        /* 第一屏：生日祝福主视觉 */
+        .hero {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            background: radial-gradient(circle at 20% 30%, rgba(130, 170, 135, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 80% 70%, rgba(145, 185, 145, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(110, 160, 120, 0.12) 0%, transparent 55%);
+            backdrop-filter: blur(2px);
+            box-shadow: inset 0 -20px 40px rgba(0, 0, 0, 0.35);
+            z-index: 2;
+        }
+
+        /* 卡片3D透视容器 */
+        .card-perspective {
+            perspective: 1200px;
+            width: 100%;
+            max-width: 650px;
+            display: flex;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .birthday-card {
+            position: relative;
+            z-index: 10;
+            background: rgba(36, 50, 40, 0.35);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 64px;
+            padding: 2.8rem 2.2rem;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.45), 0 0 0 1.5px rgba(155, 200, 155, 0.4),
+                0 0 100px rgba(100, 165, 115, 0.4);
+            border: 1px solid rgba(175, 215, 175, 0.3);
+            max-width: 650px;
+            width: 100%;
+            transition: box-shadow 0.4s ease;
+            animation: cardGlowSoft 5s infinite alternate;
+            transform-style: preserve-3d;
+            will-change: transform;
+            cursor: pointer;
+        }
+
+        @keyframes cardGlowSoft {
+            0% {
+                box-shadow: 0 30px 50px rgba(0, 0, 0, 0.45), 0 0 0 1.5px rgba(155, 200, 155, 0.4), 0 0 100px rgba(100, 165, 115, 0.4);
+            }
+            100% {
+                box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(175, 220, 170, 0.55), 0 0 140px rgba(115, 180, 125, 0.55);
+            }
+        }
+
+        .greeting-icon {
+            font-size: 4.2rem;
+            margin-bottom: 0.4rem;
+            filter: drop-shadow(0 10px 12px rgba(100, 170, 100, 0.5));
+            animation: bounceIcon 2s infinite;
+            transform: translateZ(30px);
+        }
+
+        @keyframes bounceIcon {
+            0%,
+            100% {
+                transform: translateY(0) translateZ(30px);
+            }
+            30% {
+                transform: translateY(-16px) translateZ(30px);
+            }
+            50% {
+                transform: translateY(0) translateZ(30px);
+            }
+            70% {
+                transform: translateY(-7px) translateZ(30px);
+            }
+        }
+
+        .name {
+            font-size: clamp(3.4rem, 10vw, 5.2rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #d4e8cc, #aad4aa, #8cc08c, #b8dcb8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 0.4rem 0 0.2rem;
+            letter-spacing: 0.08em;
+            text-shadow: 0 0 30px rgba(90, 175, 90, 0.45);
+            line-height: 1.2;
+            transform: translateZ(40px);
+            transition: text-shadow 0.4s;
+        }
+
+        .birthday-message {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #daf0da;
+            margin: 0.8rem 0 1.5rem;
+            background: rgba(25, 48, 30, 0.28);
+            display: inline-block;
+            padding: 0.5rem 2rem;
+            border-radius: 60px;
+            backdrop-filter: blur(10px);
+            letter-spacing: 0.05em;
+            border: 1px solid rgba(145, 200, 145, 0.45);
+            transform: translateZ(20px);
+        }
+
+        .sub-text {
+            font-size: 1.2rem;
+            color: #c8e4c8;
+            margin-bottom: 2.2rem;
+            font-weight: 300;
+            line-height: 1.6;
+            max-width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+            transform: translateZ(25px);
+        }
+
+        .scroll-hint {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            color: #c0e8c0;
+            letter-spacing: 0.1em;
+            margin-top: 0.8rem;
+            opacity: 0.85;
+            animation: fadeHint 2s infinite;
+            cursor: pointer;
+            transform: translateZ(15px);
+            transition: transform 0.2s, color 0.2s;
+        }
+        .scroll-hint:hover {
+            transform: translateZ(15px) scale(1.05);
+            color: #daf0da;
+        }
+
+        .scroll-arrow {
+            font-size: 2.2rem;
+            animation: bounceDown 1.6s infinite;
+            filter: drop-shadow(0 4px 6px black);
+        }
+
+        @keyframes bounceDown {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(14px);
+            }
+        }
+
+        @keyframes fadeHint {
+            0%,
+            100% {
+                opacity: 0.55;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* 视频区域 */
+        .video-section {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at 50% 30%, #2a3a2e 0%, #141f17 80%);
+            padding: 2rem 1.2rem;
+            position: relative;
+            box-shadow: inset 0 30px 45px rgba(0, 0, 0, 0.55);
+            z-index: 2;
+        }
+
+        .video-label {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1.8rem;
+            color: #c0e8c0;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(20, 42, 25, 0.5);
+            padding: 0.6rem 2.2rem;
+            border-radius: 50px;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(135, 205, 140, 0.45);
+            letter-spacing: 0.04em;
+            text-shadow: 0 2px 6px black;
+            box-shadow: 0 8px 20px rgba(0, 25, 0, 0.45);
+        }
+
+        .video-container {
+            width: 100%;
+            max-width: 900px;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            border-radius: 36px;
+            overflow: hidden;
+            box-shadow: 0 35px 70px rgba(0, 0, 0, 0.65), 0 0 0 2px rgba(120, 195, 120, 0.5),
+                0 0 90px rgba(80, 155, 95, 0.5);
+            transition: all 0.25s;
+            position: relative;
+            z-index: 5;
+        }
+
+        .video-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        .video-note {
+            margin-top: 1.5rem;
+            color: #b8d8b8;
+            font-size: 1rem;
+            opacity: 0.9;
+            text-align: center;
+            max-width: 600px;
+            text-shadow: 0 2px 5px black;
+            line-height: 1.7;
+            letter-spacing: 0.03em;
+        }
+
+        /* 重力感应激活提示 */
+        .tilt-hint {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(28, 48, 32, 0.7);
+            backdrop-filter: blur(15px);
+            border-radius: 30px;
+            padding: 0.5rem 1.2rem;
+            color: #b8e8b8;
+            font-size: 0.9rem;
+            border: 1px solid rgba(140, 210, 140, 0.55);
+            z-index: 100;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+            opacity: 0.9;
+            transition: opacity 0.4s;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .tilt-hint i {
+            font-style: normal;
+            font-size: 1.2rem;
+        }
+        .tilt-active .tilt-hint {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        @media (max-width: 600px) {
+            .birthday-card {
+                padding: 2rem 1.5rem;
+                border-radius: 48px;
+            }
+            .name {
+                font-size: 2.9rem;
+            }
+            .video-label {
+                font-size: 1.3rem;
+                padding: 0.5rem 1.5rem;
+            }
+            .sub-text {
+                max-width: 95%;
+                font-size: 1rem;
+            }
+            .tilt-hint {
+                top: 10px;
+                right: 10px;
+                font-size: 0.8rem;
+                padding: 0.4rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 柔和星空背景 -->
+    <div class="stars-bg" id="starsBg"></div>
+    <!-- 飘落的叶子 -->
+    <div class="falling-leaves" id="fallingLeaves"></div>
+
+    <!-- 倾斜激活提示（重力感应未激活时显示） -->
+    <div class="tilt-hint" id="tiltHint">
+        <i>🍃</i> 倾斜手机试试看
+    </div>
+
+    <div class="wrapper">
+        <!-- 第一屏：生日祝福 -->
+        <section class="hero">
+            <div class="card-perspective" id="cardPerspective">
+                <div class="birthday-card" id="birthdayCard">
+                    <div class="greeting-icon">🎂🍀🎉</div>
+                    <h1 class="name">许凌菲</h1>
+                    <div class="birthday-message">✨ 生 日 快 乐 ✨</div>
+                    <p class="sub-text">
+                        雪梨饭 Happy Birthday<br> NFC真好用
+                        <br> hhhhhhhhhh
+                    </p>
+                    <div class="scroll-hint" id="scrollHint">
+                        <span>向下滑动有蛋糕吃</span>
+                        <span class="scroll-arrow">↓</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第二屏：视频播放 -->
+        <section class="video-section" id="videoSection">
+            <div class="video-label">
+                <span>🎬</span> 我做了生日蛋糕给你！(¬‿¬) <span>🍃</span>
+            </div>
+            <div class="video-container">
+                <iframe src="https://player.bilibili.com/player.html?bvid=BV1PUDcBTETL&page=1&high_quality=1&danmaku=1&autoplay=0"
+                allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                allowfullscreen
+                loading="lazy"
+                title="我做了生日蛋糕给你！">
+            </iframe>
+        </div>
+        <p class="video-note">
+            17P 与DS大战三百回合 制作<br>天天开心，生日快乐！
+        </p>
+    </section>
+</div>
+
+<script>
+    (function() {
+        // ---------- 生成柔和星空 ----------
+        function createStars() {
+            const container = document.getElementById('starsBg');
+            const starCount = 75;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3.5 + 1.8;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 9 + 's';
+                star.style.animationDuration = (Math.random() * 7 + 4) + 's';
+                container.appendChild(star);
+            }
+        }
+
+        // ---------- 生成飘落叶子 ----------
+        function createFallingLeaves() {
+            const container = document.getElementById('fallingLeaves');
+            const leafEmojis = ['🍀', '🌿', '🍃', '✨', '💚', '🌱', '🍀', '🌿'];
+            const leafCount = 22;
+            for (let i = 0; i < leafCount; i++) {
+                const leaf = document.createElement('div');
+                leaf.className = 'leaf';
+                leaf.textContent = leafEmojis[Math.floor(Math.random() * leafEmojis.length)];
+                leaf.style.left = Math.random() * 100 + '%';
+                leaf.style.fontSize = (Math.random() * 2 + 1.1) + 'rem';
+                leaf.style.animationDuration = (Math.random() * 12 + 7) + 's';
+                leaf.style.animationDelay = Math.random() * 15 + 's';
+                leaf.style.opacity = Math.random() * 0.4 + 0.15;
+                container.appendChild(leaf);
+            }
+        }
+
+        // ---------- DOM 引用 ----------
+        const card = document.getElementById('birthdayCard');
+        const perspectiveDiv = document.getElementById('cardPerspective');
+        const tiltHint = document.getElementById('tiltHint');
+        const body = document.body;
+
+        // ---------- 重力感应状态 ----------
+        window.orientationActive = false;
+        window._orientationRequested = false;
+        let initialBeta = null;
+        let initialGamma = null;
+        let orientationCalibrated = false;
+        let orientationDataTimeout = null;
+        const ORIENTATION_TIMEOUT_MS = 3000; // 3秒无数据则恢复鼠标交互
+
+        // 平滑插值变量
+        let currentRotateX = 0;
+        let currentRotateY = 0;
+        let targetRotateX = 0;
+        let targetRotateY = 0;
+        let smoothAnimationId = null;
+        const SMOOTHING_FACTOR = 0.14; // lerp平滑因子，越小越平滑但响应稍慢
+
+        // ---------- 平滑动画循环 ----------
+        function startSmoothLoop() {
+            if (smoothAnimationId) return;
+            function loop() {
+                // lerp插值
+                currentRotateX += (targetRotateX - currentRotateX) * SMOOTHING_FACTOR;
+                currentRotateY += (targetRotateY - currentRotateY) * SMOOTHING_FACTOR;
+
+                if (card) {
+                    card.style.transform = `rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg)`;
+                }
+
+                // 检查是否应该停止循环（重力感应已失活且接近原点）
+                const nearOrigin = Math.abs(currentRotateX) < 0.02 && Math.abs(currentRotateY) < 0.02;
+                if (!window.orientationActive && nearOrigin) {
+                    // 完全归位
+                    if (card) {
+                        card.style.transform = '';
+                        card.style.transition = '';
+                    }
+                    currentRotateX = 0;
+                    currentRotateY = 0;
+                    targetRotateX = 0;
+                    targetRotateY = 0;
+                    smoothAnimationId = null;
+                    return;
+                }
+
+                smoothAnimationId = requestAnimationFrame(loop);
+            }
+            smoothAnimationId = requestAnimationFrame(loop);
+        }
+
+        function stopSmoothLoop() {
+            if (smoothAnimationId) {
+                cancelAnimationFrame(smoothAnimationId);
+                smoothAnimationId = null;
+            }
+            // 重置插值状态
+            currentRotateX = 0;
+            currentRotateY = 0;
+            targetRotateX = 0;
+            targetRotateY = 0;
+            if (card) {
+                card.style.transform = '';
+                card.style.transition = '';
+            }
+        }
+
+        // ---------- 设置目标旋转角度 ----------
+        function setOrientationTarget(beta, gamma) {
+            const deltaBeta = beta - (initialBeta || 0);
+            const deltaGamma = gamma - (initialGamma || 0);
+            targetRotateY = Math.max(-12, Math.min(12, deltaGamma * 0.3));
+            targetRotateX = Math.max(-12, Math.min(12, -deltaBeta * 0.3));
+
+            // 重置超时计时器
+            if (orientationDataTimeout) clearTimeout(orientationDataTimeout);
+            orientationDataTimeout = setTimeout(() => {
+                // 超时：恢复鼠标交互
+                deactivateOrientation();
+            }, ORIENTATION_TIMEOUT_MS);
+        }
+
+        // ---------- 激活重力感应 ----------
+        function activateOrientation() {
+            if (window.orientationActive) return;
+            window.orientationActive = true;
+            document.body.classList.add('tilt-active');
+            if (tiltHint) tiltHint.style.opacity = '0';
+            if (card) {
+                card.style.transition = 'none';
+            }
+            // 启动平滑动画循环
+            startSmoothLoop();
+            console.log('🌿 重力感应已激活，倾斜手机查看卡片3D效果');
+        }
+
+        // ---------- 失活重力感应 ----------
+        function deactivateOrientation() {
+            if (!window.orientationActive) return;
+            window.orientationActive = false;
+            orientationCalibrated = false;
+            initialBeta = null;
+            initialGamma = null;
+            document.body.classList.remove('tilt-active');
+            if (tiltHint) tiltHint.style.opacity = '0.9';
+            if (orientationDataTimeout) {
+                clearTimeout(orientationDataTimeout);
+                orientationDataTimeout = null;
+            }
+            // 设置目标归零，让平滑循环自然回归
+            targetRotateX = 0;
+            targetRotateY = 0;
+            // 循环会在接近原点时自动停止
+            console.log('🍃 重力感应已断开，恢复鼠标/触摸交互');
+        }
+
+        // ---------- 重力感应事件处理 ----------
+        function handleOrientation(event) {
+            const beta = event.beta;
+            const gamma = event.gamma;
+
+            if (beta === null || gamma === null) return;
+
+            // 首次校准
+            if (!orientationCalibrated) {
+                initialBeta = beta;
+                initialGamma = gamma;
+                orientationCalibrated = true;
+                if (!window.orientationActive) {
+                    activateOrientation();
+                }
+                // 初始target为零
+                targetRotateX = 0;
+                targetRotateY = 0;
+                return;
+            }
+
+            // 更新目标角度
+            setOrientationTarget(beta, gamma);
+        }
+
+        // ---------- 请求重力感应权限 ----------
+        async function requestOrientationPermission() {
+            if (typeof DeviceOrientationEvent === 'undefined') {
+                console.log('此设备不支持重力感应');
+                return;
+            }
+
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                try {
+                    const permission = await DeviceOrientationEvent.requestPermission();
+                    if (permission === 'granted') {
+                        window.addEventListener('deviceorientation', handleOrientation);
+                        console.log('✅ iOS重力感应权限已授予');
+                    } else {
+                        console.log('❌ 用户拒绝了方向权限');
+                        window.orientationActive = false;
+                    }
+                } catch (error) {
+                    console.log('请求方向权限时出错:', error);
+                    window.orientationActive = false;
+                }
+            } else {
+                // 安卓或其他设备直接监听
+                window.addEventListener('deviceorientation', handleOrientation);
+                console.log('📱 重力感应直接启动（非iOS设备）');
+            }
+        }
+
+        // ---------- 用户交互时激活重力感应 ----------
+        function activateOnInteraction() {
+            if (window.orientationActive || window._orientationRequested) return;
+            window._orientationRequested = true;
+            requestOrientationPermission();
+
+            // 移除一次性监听
+            document.body.removeEventListener('click', activateOnInteraction);
+            document.body.removeEventListener('touchstart', activateOnInteraction);
+        }
+
+        // 绑定激活事件（用户首次点击/触摸页面时尝试激活）
+        document.body.addEventListener('click', activateOnInteraction);
+        document.body.addEventListener('touchstart', activateOnInteraction);
+
+        // 如果浏览器直接提供方向数据（部分安卓浏览器），自动激活
+        window.addEventListener('deviceorientation', function autoDetect(event) {
+            if (
+                event.beta !== null &&
+                event.gamma !== null &&
+                !window.orientationActive &&
+                !window._orientationRequested
+            ) {
+                window._orientationRequested = true;
+                window.addEventListener('deviceorientation', handleOrientation);
+                document.body.removeEventListener('click', activateOnInteraction);
+                document.body.removeEventListener('touchstart', activateOnInteraction);
+                console.log('🔍 自动检测到重力感应数据，已激活');
+            }
+        }, { once: false });
+
+        // ---------- 桌面鼠标3D倾斜 ----------
+        function initDesktopTilt() {
+            if (!card || !perspectiveDiv) return;
+
+            function handleMouseMove(e) {
+                if (window.orientationActive) return;
+                const rect = perspectiveDiv.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateY = ((x - centerX) / centerX) * 7;
+                const rotateX = ((y - centerY) / centerY) * -7;
+                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                card.style.transition = 'none';
+            }
+
+            function handleMouseLeave() {
+                if (window.orientationActive) return;
+                card.style.transition = 'transform 0.4s ease-out';
+                card.style.transform = 'rotateX(0deg) rotateY(0deg)';
+            }
+
+            perspectiveDiv.addEventListener('mousemove', handleMouseMove);
+            perspectiveDiv.addEventListener('mouseleave', handleMouseLeave);
+
+            // 触摸备用（移动端未激活重力感应时）
+            perspectiveDiv.addEventListener('touchmove', function(e) {
+                if (window.orientationActive) return;
+                e.preventDefault();
+                const touch = e.touches[0];
+                const rect = perspectiveDiv.getBoundingClientRect();
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateY = ((x - centerX) / centerX) * 7;
+                const rotateX = ((y - centerY) / centerY) * -7;
+                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                card.style.transition = 'none';
+            }, { passive: false });
+
+            perspectiveDiv.addEventListener('touchend', function() {
+                if (window.orientationActive) return;
+                card.style.transition = 'transform 0.4s ease-out';
+                card.style.transform = 'rotateX(0deg) rotateY(0deg)';
+            });
+        }
+
+        // ---------- 点击卡片生成绿色祝福气泡 ----------
+        function initClickBubbles() {
+            if (!card) return;
+            const messages = [
+                '🎂 生日快乐！',
+                '🍀 幸运常伴！',
+                '💚 天天开心！',
+                '🌿 梦想成真！',
+                '✨ 班长牛逼！',
+                '🎉 永远美好！',
+                '🌱 向阳而生！',
+                '🍃 输入文本！',
+            ];
+
+            card.addEventListener('click', function(e) {
+                const bubble = document.createElement('div');
+                bubble.textContent = messages[Math.floor(Math.random() * messages.length)];
+                bubble.style.position = 'absolute';
+                bubble.style.left = (e.clientX - card.getBoundingClientRect().left) + 'px';
+                bubble.style.top = (e.clientY - card.getBoundingClientRect().top) + 'px';
+                bubble.style.color = '#daf0da';
+                bubble.style.background = 'rgba(36, 60, 40, 0.72)';
+                bubble.style.backdropFilter = 'blur(10px)';
+                bubble.style.borderRadius = '30px';
+                bubble.style.padding = '6px 18px';
+                bubble.style.fontSize = '1.2rem';
+                bubble.style.fontWeight = 'bold';
+                bubble.style.pointerEvents = 'none';
+                bubble.style.zIndex = '999';
+                bubble.style.transform = 'translate(-50%, -50%) scale(0.5)';
+                bubble.style.opacity = '1';
+                bubble.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                bubble.style.boxShadow = '0 10px 20px rgba(0,0,0,0.3)';
+                bubble.style.whiteSpace = 'nowrap';
+                card.appendChild(bubble);
+
+                requestAnimationFrame(() => {
+                    bubble.style.transform = 'translate(-50%, -150%) scale(1.15)';
+                    bubble.style.opacity = '0';
+                });
+
+                bubble.addEventListener('transitionend', function() {
+                    if (bubble.parentNode) bubble.parentNode.removeChild(bubble);
+                });
+            });
+        }
+
+        // ---------- 下滑提示滚动到视频 ----------
+        function initScrollHint() {
+            const scrollHint = document.getElementById('scrollHint');
+            const videoSection = document.getElementById('videoSection');
+            if (scrollHint && videoSection) {
+                scrollHint.addEventListener('click', function(e) {
+                    videoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            }
+        }
+
+        // ---------- 启动一切 ----------
+        createStars();
+        createFallingLeaves();
+        initDesktopTilt();
+        initClickBubbles();
+        initScrollHint();
+
+        // 控制台生日祝福
+        console.log('🍀 许凌菲，生日快乐！');
+        console.log('17P 与DS大战三百回合 制作');
+        console.log('天天开心，生日快乐！');
+        console.log('📺 视频来源：B站');
+    })();
+</script>
+</body>
+</html>
