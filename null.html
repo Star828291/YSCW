@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>■■■■■</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif;
+            background: #0a0a0a;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            background: radial-gradient(ellipse at 30% 20%, #1a0505 0%, #050000 60%, #000000 100%);
+            color: #6a6a6a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* 暗色覆盖层（轻微，为了衬托亮色） */
+        .dark-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at 40% 30%, rgba(40, 5, 5, 0.2) 0%, rgba(0, 0, 0, 0.5) 80%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* 乱码背景层 - 铺满全屏 */
+        .garbled-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .garbled-char {
+            position: absolute;
+            font-weight: 300;
+            user-select: none;
+            animation: floatGarbled linear infinite;
+            transform-origin: center;
+            transition: none;
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            white-space: nowrap;
+            letter-spacing: 0.03em;
+        }
+
+        @keyframes floatGarbled {
+            0% {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            25% {
+                transform: translate(15px, -20px) rotate(4deg) scale(1.08);
+            }
+            50% {
+                transform: translate(-10px, 12px) rotate(-3deg) scale(0.92);
+            }
+            75% {
+                transform: translate(18px, 8px) rotate(5deg) scale(1.04);
+            }
+            100% {
+                transform: translate(-12px, -15px) rotate(-2deg) scale(0.96);
+            }
+        }
+
+        /* 红点层 - 数量多且鲜艳 */
+        .red-dots {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .red-dot {
+            position: absolute;
+            border-radius: 50%;
+            animation: floatDot ease-in-out infinite alternate;
+            opacity: 0.6;
+        }
+
+        .red-dot.dark {
+            opacity: 0.15;
+            box-shadow: 0 0 8px rgba(100, 10, 10, 0.2);
+        }
+        .red-dot.bright {
+            opacity: 0.9;
+            background: radial-gradient(circle at 30% 30%, #ff3a3a, #aa0a0a);
+            box-shadow: 0 0 40px rgba(255, 30, 30, 0.7), 0 0 80px rgba(200, 20, 20, 0.3);
+        }
+        .red-dot.pulse {
+            animation: pulseDot 1.8s ease-in-out infinite;
+        }
+        .red-dot.super-bright {
+            background: radial-gradient(circle at 30% 30%, #ff6666, #ff0000);
+            box-shadow: 0 0 60px rgba(255, 0, 0, 0.9);
+            opacity: 0.95;
+        }
+
+        @keyframes floatDot {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                transform: translate(25px, -30px) scale(1.3);
+            }
+        }
+
+        @keyframes pulseDot {
+            0%,
+            100% {
+                opacity: 0.2;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.8);
+                box-shadow: 0 0 80px rgba(255, 0, 0, 0.8);
+            }
+        }
+
+        /* 高饱和荧光漂浮物（增强违和感） */
+        .neon-glows {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .neon-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.25;
+            animation: blobMove 12s ease-in-out infinite alternate;
+        }
+        @keyframes blobMove {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                transform: translate(80px, -60px) scale(1.5);
+            }
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 5;
+        }
+
+        /* 第一屏 */
+        .hero {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            background: radial-gradient(circle at 20% 30%, rgba(80, 20, 20, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(60, 10, 10, 0.15) 0%, transparent 45%);
+            box-shadow: inset 0 -20px 40px rgba(0, 0, 0, 0.7);
+            z-index: 2;
+        }
+
+        .card-perspective {
+            perspective: 1200px;
+            width: 100%;
+            max-width: 650px;
+            display: flex;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .birthday-card {
+            position: relative;
+            z-index: 10;
+            background: rgba(8, 4, 4, 0.7);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 64px;
+            padding: 2.8rem 2.2rem;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.9), 0 0 0 2px rgba(200, 50, 50, 0.3),
+                0 0 100px rgba(200, 30, 30, 0.2);
+            border: 1px solid rgba(255, 60, 60, 0.15);
+            max-width: 650px;
+            width: 100%;
+            transition: box-shadow 0.4s ease;
+            animation: cardGlowDark 5s infinite alternate;
+            transform-style: preserve-3d;
+            will-change: transform;
+            cursor: pointer;
+        }
+
+        @keyframes cardGlowDark {
+            0% {
+                box-shadow: 0 30px 50px rgba(0, 0, 0, 0.9), 0 0 0 2px rgba(200, 50, 50, 0.3), 0 0 100px rgba(200, 30, 30, 0.2);
+            }
+            100% {
+                box-shadow: 0 30px 60px rgba(0, 0, 0, 0.95), 0 0 0 3px rgba(255, 80, 80, 0.5), 0 0 150px rgba(255, 40, 40, 0.35);
+            }
+        }
+
+        .greeting-icon {
+            font-size: 4.0rem;
+            margin-bottom: 0.4rem;
+            filter: drop-shadow(0 8px 20px rgba(200, 30, 30, 0.6));
+            animation: bounceIconDark 2s infinite;
+            transform: translateZ(30px);
+            opacity: 0.9;
+            color: #ff4d4d;
+        }
+
+        @keyframes bounceIconDark {
+            0%,
+            100% {
+                transform: translateY(0) translateZ(30px);
+            }
+            30% {
+                transform: translateY(-14px) translateZ(30px);
+            }
+            50% {
+                transform: translateY(0) translateZ(30px);
+            }
+            70% {
+                transform: translateY(-6px) translateZ(30px);
+            }
+        }
+
+        /* 名字用非中文乱码（符号+英文乱码） */
+        .name {
+            font-size: clamp(2.5rem, 8vw, 4.0rem);
+            font-weight: 900;
+            color: #ffaa00;
+            margin: 0.4rem 0 0.2rem;
+            letter-spacing: 0.15em;
+            text-shadow: 0 0 40px rgba(255, 170, 0, 0.4), 0 0 80px rgba(255, 100, 0, 0.15);
+            line-height: 1.3;
+            transform: translateZ(40px);
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+        }
+
+        .birthday-message {
+            font-size: 2.0rem;
+            font-weight: 800;
+            color: #ff2a2a;
+            margin: 0.8rem 0 1.5rem;
+            background: rgba(30, 5, 5, 0.6);
+            display: inline-block;
+            padding: 0.5rem 2.4rem;
+            border-radius: 60px;
+            backdrop-filter: blur(10px);
+            letter-spacing: 0.1em;
+            border: 1px solid rgba(255, 60, 60, 0.5);
+            transform: translateZ(20px);
+            text-shadow: 0 0 40px rgba(255, 0, 0, 0.5), 0 0 80px rgba(200, 0, 0, 0.2);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
+        }
+
+        .sub-text {
+            font-size: 1.1rem;
+            color: #cc8888;
+            margin-bottom: 2.2rem;
+            font-weight: 400;
+            line-height: 2.0;
+            max-width: 85%;
+            margin-left: auto;
+            margin-right: auto;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+            transform: translateZ(25px);
+            letter-spacing: 0.06em;
+            font-family: 'Segoe UI', 'PingFang SC', sans-serif;
+        }
+        .sub-text .redacted {
+            color: #ff6666;
+            font-weight: 900;
+            letter-spacing: 0.2em;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+        }
+
+        .scroll-hint {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.0rem;
+            color: #884444;
+            letter-spacing: 0.15em;
+            margin-top: 0.8rem;
+            opacity: 0.8;
+            animation: fadeHintDark 1.5s infinite;
+            cursor: pointer;
+            transform: translateZ(15px);
+            transition: transform 0.2s, color 0.2s;
+        }
+        .scroll-hint:hover {
+            transform: translateZ(15px) scale(1.05);
+            color: #cc6666;
+        }
+
+        .scroll-arrow {
+            font-size: 2.4rem;
+            animation: bounceDownDark 1.6s infinite;
+            filter: drop-shadow(0 4px 10px rgba(200, 0, 0, 0.4));
+            color: #cc3333;
+        }
+
+        @keyframes bounceDownDark {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(16px);
+            }
+        }
+
+        @keyframes fadeHintDark {
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 0.9;
+            }
+        }
+
+        /* 视频区域 */
+        .video-section {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at 50% 30%, #1a0505 0%, #050000 70%, #000000 100%);
+            padding: 2rem 1.2rem;
+            position: relative;
+            box-shadow: inset 0 30px 45px rgba(0, 0, 0, 0.8);
+            z-index: 2;
+        }
+
+        .video-label {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1.8rem;
+            color: #aa5555;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(20, 5, 5, 0.7);
+            padding: 0.6rem 2.4rem;
+            border-radius: 50px;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 80, 80, 0.2);
+            letter-spacing: 0.08em;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+        }
+        .video-label .redacted-block {
+            color: #ff4444;
+            font-weight: 900;
+            font-size: 2.0rem;
+            letter-spacing: 0.15em;
+            text-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+        }
+
+        .video-container {
+            width: 100%;
+            max-width: 900px;
+            aspect-ratio: 16 / 9;
+            background: #0a0000;
+            border-radius: 36px;
+            overflow: hidden;
+            box-shadow: 0 35px 70px rgba(0, 0, 0, 0.9), 0 0 0 2px rgba(200, 40, 40, 0.3),
+                0 0 100px rgba(150, 20, 20, 0.2);
+            transition: all 0.25s;
+            position: relative;
+            z-index: 5;
+        }
+
+        .video-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        .video-note {
+            margin-top: 1.5rem;
+            color: #664444;
+            font-size: 1.0rem;
+            opacity: 0.8;
+            text-align: center;
+            max-width: 600px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+            line-height: 1.8;
+            letter-spacing: 0.06em;
+        }
+
+        .tilt-hint {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(20, 5, 5, 0.8);
+            backdrop-filter: blur(15px);
+            border-radius: 30px;
+            padding: 0.5rem 1.4rem;
+            color: #884444;
+            font-size: 0.85rem;
+            border: 1px solid rgba(200, 50, 50, 0.25);
+            z-index: 100;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+            opacity: 0.7;
+            transition: opacity 0.4s;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .tilt-hint i {
+            font-style: normal;
+            font-size: 1.1rem;
+        }
+        .tilt-active .tilt-hint {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        @media (max-width: 600px) {
+            .birthday-card {
+                padding: 2rem 1.5rem;
+                border-radius: 48px;
+            }
+            .name {
+                font-size: 2.4rem;
+            }
+            .birthday-message {
+                font-size: 1.6rem;
+                padding: 0.4rem 1.6rem;
+            }
+            .video-label {
+                font-size: 1.3rem;
+                padding: 0.5rem 1.5rem;
+            }
+            .sub-text {
+                max-width: 95%;
+                font-size: 0.95rem;
+            }
+            .tilt-hint {
+                top: 10px;
+                right: 10px;
+                font-size: 0.7rem;
+                padding: 0.3rem 0.8rem;
+            }
+            .greeting-icon {
+                font-size: 3.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 暗色覆盖层 -->
+    <div class="dark-overlay"></div>
+
+    <!-- 高饱和荧光背景光晕 -->
+    <div class="neon-glows" id="neonGlows">
+        <div class="neon-blob" style="width:600px;height:600px;background:#ff0066;top:10%;left:-10%;"></div>
+        <div class="neon-blob" style="width:500px;height:500px;background:#00ffcc;bottom:10%;right:-10%;opacity:0.15;"></div>
+        <div class="neon-blob" style="width:400px;height:400px;background:#ffaa00;top:50%;left:60%;opacity:0.2;animation-duration:15s;"></div>
+        <div class="neon-blob" style="width:350px;height:350px;background:#ff00ff;bottom:20%;left:20%;opacity:0.15;animation-duration:10s;"></div>
+    </div>
+
+    <!-- 乱码背景 - 铺满，全是中文字符 -->
+    <div class="garbled-bg" id="garbledBg"></div>
+
+    <!-- 红点层 - 数量多且鲜艳 -->
+    <div class="red-dots" id="redDots"></div>
+
+    <!-- 倾斜提示 -->
+    <div class="tilt-hint" id="tiltHint">
+        <i>🕸️</i> 倾斜试试
+    </div>
+
+    <div class="wrapper">
+        <!-- 第一屏 -->
+        <section class="hero">
+            <div class="card-perspective" id="cardPerspective">
+                <div class="birthday-card" id="birthdayCard">
+                    <div class="greeting-icon">🩸☠️🦇</div>
+                    <!-- 名字使用非中文乱码（符号+英文混乱） -->
+                    <h1 class="name">ÆØÅ ß∂ƒ©˙∆</h1>
+                    <div class="birthday-message">✦ 生 日 快 乐 ✦</div>
+                    <p class="sub-text">
+                        鏃犲敖鐨勬ⅵ澧冿紝娣辨笂鐨勫懠鍤<br>
+                        ʎɹɹɐH ʎpɐɹq <span class="redacted">■■■■</span> ǝɯᴉʇ ɹnoʎ ʎoɾuǝ<br>
+                        鏃犲敖鐨勭瑧澹帮紝鏃犲敖鐨勭棝
+                    </p>
+                    <div class="scroll-hint" id="scrollHint">
+                        <span>⬇ ⬇ ⬇ 鍚戜笅婊戝姩鏈 <span class="redacted">■■</span> 鍚 ⬇ ⬇ ⬇</span>
+                        <span class="scroll-arrow">⬇</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第二屏：视频 -->
+        <section class="video-section" id="videoSection">
+            <div class="video-label">
+                <span>🕸️</span> 鎴戝仛浜 <span class="redacted-block">■■■■</span> 缁欎綘 <span>🩸</span>
+            </div>
+            <div class="video-container" id="videoContainer">
+                <!-- 视频iframe由JS动态加载 -->
+            </div>
+            <p class="video-note">
+                ©˙∆ ʎɹɹɐH ʎpɐɹq ǝɯᴉʇ ɹnoʎ ʎoɾuǝ<br>
+                鏃犲敖鐨勬繁娓︿腑鐨勫埗浣滐紝鏃犲敖鐨勬繁娓︼紝生日快乐！
+            </p>
+        </section>
+    </div>
+
+    <script>
+        (function() {
+            // ---------- 超丰富中文乱码池（解析错误的中文） ----------
+            const garbledPool = [
+                '鐧惧害', '鎼滅储', '鐢ㄦ埛', '鐧诲綍', '鐐瑰嚮', '鏌ョ湅', '鏇存柊',
+                '绯荤粺', '鐜板湪', '杩涘叆', '鐩稿叧', '鎻愮ず', '椤甸潰', '鍐呭',
+                '鐗堟湰', '涓嬭浇', '涓婁紶', '鐢佃剳', '鎵嬫満', '鏂囦欢', '鐢ㄦ埛鍚',
+                '瀵嗙爜', '鐧诲綍鎴愬姛', '鎿嶄綔澶辫触', '绋嬪簭', '鏁版嵁', '缃戠粶',
+                '绯荤粺閿欒', '鍐呭瓨涓嶈冻', '鏂囦欢涓嶅瓨', '璁块棶琚嫆', '瓒呮椂',
+                '榛戞殫', '鏃犲敖', '娣辨笂', '鎭愭栧', '姝讳骸', '琛鐪',
+                '鐧借壊', '榛戣壊', '鐏拌壊', '琛鑹', '澶滆壊',
+                '鐪兼唱', '鍣楀惥', '鍙规伅', '杩锋亱', '鐥涜嫤',
+                '鐧借壊鐨勬ⅵ', '榛戞殫鐨勬繁娓', '琛鐨勮蹇', '鐏扮櫧鐨勪笘鐣',
+                '鏃犲敖鐨勭棝鑻', '娣辨笂鐨勫懠鍞', '姝讳骸鐨勮垶韫', '榛戞殫鐨勭鏉',
+                '鏃犲敖鐨勬亹鎬', '娣辨笂鐨勫憿鍠', '鐧借壊鐨勬亹鎬', '榛戞殫鐨勬ⅵ',
+                '鐏扮櫧鐨勬亹鎬', '琛鑹茬殑娣辨笂', '鏃犲敖鐨勯粦鏆', '娣辨笂鐨勭棝',
+                '鎭愭栫殑娓告垙', '姝讳骸鐨勫懠鍞', '榛戞殫鐨勫啀涓', '鐧借壊鐨勯粯',
+                '璁块棶琚嫆', '瓒呮椂閿欒', '绯荤粺寮傚父', '鏁版嵁鎹熷潖',
+                '鏂囦欢澶辫触', '鐢ㄦ埛鏃犳晥', '瀵嗙爜閿欒', '鐧诲綍澶辫触',
+                '娓告垙缁撴潫', '寮傚父閫鍑', '鍐呭瓨婧㈠嚭', '缂撳瓨娓呯悊',
+                '鏃犳晥鐨勮瘉涔', '缃戠粶涓嶇ǔ', '璇锋眰瓒呮椂', '鏈嶅姟涓嶅彲鐢'
+            ];
+
+            // ---------- 生成铺满全屏的中文乱码 ----------
+            function createGarbled() {
+                const container = document.getElementById('garbledBg');
+                const count = 380; // 大量铺满
+                const brightColors = ['#ff3366', '#ffaa00', '#00ffcc', '#ff00ff', '#ffcc00', '#ff4444', '#66ff33'];
+
+                for (let i = 0; i < count; i++) {
+                    const el = document.createElement('div');
+                    el.className = 'garbled-char';
+
+                    // 随机取1~4个乱码组合
+                    let text = garbledPool[Math.floor(Math.random() * garbledPool.length)];
+                    if (Math.random() > 0.6) text += ' ' + garbledPool[Math.floor(Math.random() * garbledPool.length)];
+                    if (Math.random() > 0.8) text += ' ' + garbledPool[Math.floor(Math.random() * garbledPool.length)];
+                    el.textContent = text;
+
+                    el.style.left = Math.random() * 100 + '%';
+                    el.style.top = Math.random() * 100 + '%';
+                    el.style.animationDuration = (Math.random() * 20 + 14) + 's';
+                    el.style.animationDelay = (Math.random() * 25) + 's';
+                    el.style.fontSize = (Math.random() * 3.2 + 0.9) + 'rem';
+                    el.style.opacity = Math.random() * 0.45 + 0.1;
+
+                    // 约30%的乱码赋予高饱和荧光色，增强违和恐怖
+                    if (Math.random() > 0.7) {
+                        const c = brightColors[Math.floor(Math.random() * brightColors.length)];
+                        el.style.color = c;
+                        el.style.textShadow = '0 0 30px ' + c + ', 0 0 60px ' + c + '40';
+                        el.style.opacity = Math.random() * 0.5 + 0.3;
+                    } else {
+                        // 普通暗色乱码
+                        el.style.color = Math.random() > 0.5 ? '#2a1a1a' : '#1a1111';
+                        el.style.textShadow = '0 0 15px rgba(80,20,20,0.1)';
+                    }
+
+                    // 随机旋转
+                    el.style.transform = 'rotate(' + (Math.random() * 40 - 20) + 'deg)';
+                    container.appendChild(el);
+                }
+            }
+
+            // ---------- 生成大量红点（鲜艳、明亮） ----------
+            function createRedDots() {
+                const container = document.getElementById('redDots');
+                const count = 180;
+                for (let i = 0; i < count; i++) {
+                    const dot = document.createElement('div');
+                    dot.className = 'red-dot';
+                    const size = Math.random() * 22 + 3;
+                    dot.style.width = size + 'px';
+                    dot.style.height = size + 'px';
+                    dot.style.left = Math.random() * 100 + '%';
+                    dot.style.top = Math.random() * 100 + '%';
+                    dot.style.animationDuration = (Math.random() * 10 + 5) + 's';
+                    dot.style.animationDelay = (Math.random() * 12) + 's';
+
+                    const r = Math.random();
+                    if (r > 0.85) {
+                        dot.classList.add('super-bright');
+                    } else if (r > 0.6) {
+                        dot.classList.add('bright');
+                    } else if (r > 0.3) {
+                        dot.classList.add('pulse');
+                    } else {
+                        dot.classList.add('dark');
+                    }
+                    container.appendChild(dot);
+                }
+            }
+
+            // ---------- DOM引用 ----------
+            const card = document.getElementById('birthdayCard');
+            const perspectiveDiv = document.getElementById('cardPerspective');
+            const tiltHint = document.getElementById('tiltHint');
+            const body = document.body;
+
+            // ---------- 重力感应 ----------
+            window.orientationActive = false;
+            window._orientationRequested = false;
+            let initialBeta = null;
+            let initialGamma = null;
+            let orientationCalibrated = false;
+            let orientationDataTimeout = null;
+            const ORIENTATION_TIMEOUT_MS = 3000;
+
+            let currentRotateX = 0;
+            let currentRotateY = 0;
+            let targetRotateX = 0;
+            let targetRotateY = 0;
+            let smoothAnimationId = null;
+            const SMOOTHING_FACTOR = 0.14;
+
+            function startSmoothLoop() {
+                if (smoothAnimationId) return;
+
+                function loop() {
+                    currentRotateX += (targetRotateX - currentRotateX) * SMOOTHING_FACTOR;
+                    currentRotateY += (targetRotateY - currentRotateY) * SMOOTHING_FACTOR;
+
+                    if (card) {
+                        card.style.transform = 'rotateX(' + currentRotateX + 'deg) rotateY(' + currentRotateY + 'deg)';
+                    }
+
+                    const nearOrigin = Math.abs(currentRotateX) < 0.02 && Math.abs(currentRotateY) < 0.02;
+                    if (!window.orientationActive && nearOrigin) {
+                        if (card) {
+                            card.style.transform = '';
+                            card.style.transition = '';
+                        }
+                        currentRotateX = 0;
+                        currentRotateY = 0;
+                        targetRotateX = 0;
+                        targetRotateY = 0;
+                        smoothAnimationId = null;
+                        return;
+                    }
+
+                    smoothAnimationId = requestAnimationFrame(loop);
+                }
+                smoothAnimationId = requestAnimationFrame(loop);
+            }
+
+            function setOrientationTarget(beta, gamma) {
+                const deltaBeta = beta - (initialBeta || 0);
+                const deltaGamma = gamma - (initialGamma || 0);
+                targetRotateY = Math.max(-12, Math.min(12, deltaGamma * 0.3));
+                targetRotateX = Math.max(-12, Math.min(12, -deltaBeta * 0.3));
+
+                if (orientationDataTimeout) clearTimeout(orientationDataTimeout);
+                orientationDataTimeout = setTimeout(function() {
+                    deactivateOrientation();
+                }, ORIENTATION_TIMEOUT_MS);
+            }
+
+            function activateOrientation() {
+                if (window.orientationActive) return;
+                window.orientationActive = true;
+                document.body.classList.add('tilt-active');
+                if (tiltHint) tiltHint.style.opacity = '0';
+                if (card) {
+                    card.style.transition = 'none';
+                }
+                startSmoothLoop();
+            }
+
+            function deactivateOrientation() {
+                if (!window.orientationActive) return;
+                window.orientationActive = false;
+                orientationCalibrated = false;
+                initialBeta = null;
+                initialGamma = null;
+                document.body.classList.remove('tilt-active');
+                if (tiltHint) tiltHint.style.opacity = '0.7';
+                if (orientationDataTimeout) {
+                    clearTimeout(orientationDataTimeout);
+                    orientationDataTimeout = null;
+                }
+                targetRotateX = 0;
+                targetRotateY = 0;
+            }
+
+            function handleOrientation(event) {
+                const beta = event.beta;
+                const gamma = event.gamma;
+                if (beta === null || gamma === null) return;
+
+                if (!orientationCalibrated) {
+                    initialBeta = beta;
+                    initialGamma = gamma;
+                    orientationCalibrated = true;
+                    if (!window.orientationActive) {
+                        activateOrientation();
+                    }
+                    targetRotateX = 0;
+                    targetRotateY = 0;
+                    return;
+                }
+
+                setOrientationTarget(beta, gamma);
+            }
+
+            async function requestOrientationPermission() {
+                if (typeof DeviceOrientationEvent === 'undefined') return;
+                if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    try {
+                        const permission = await DeviceOrientationEvent.requestPermission();
+                        if (permission === 'granted') {
+                            window.addEventListener('deviceorientation', handleOrientation);
+                        }
+                    } catch (e) {
+                        window.orientationActive = false;
+                    }
+                } else {
+                    window.addEventListener('deviceorientation', handleOrientation);
+                }
+            }
+
+            function activateOnInteraction() {
+                if (window.orientationActive || window._orientationRequested) return;
+                window._orientationRequested = true;
+                requestOrientationPermission();
+                document.body.removeEventListener('click', activateOnInteraction);
+                document.body.removeEventListener('touchstart', activateOnInteraction);
+            }
+
+            document.body.addEventListener('click', activateOnInteraction);
+            document.body.addEventListener('touchstart', activateOnInteraction);
+
+            window.addEventListener('deviceorientation', function autoDetect(event) {
+                if (event.beta !== null && event.gamma !== null && !window.orientationActive && !window
+                    ._orientationRequested) {
+                    window._orientationRequested = true;
+                    window.addEventListener('deviceorientation', handleOrientation);
+                    document.body.removeEventListener('click', activateOnInteraction);
+                    document.body.removeEventListener('touchstart', activateOnInteraction);
+                }
+            }, { once: false });
+
+            // ---------- 桌面鼠标倾斜 ----------
+            function initDesktopTilt() {
+                if (!card || !perspectiveDiv) return;
+
+                function handleMouseMove(e) {
+                    if (window.orientationActive) return;
+                    const rect = perspectiveDiv.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateY = ((x - centerX) / centerX) * 7;
+                    const rotateX = ((y - centerY) / centerY) * -7;
+                    card.style.transform = 'rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg)';
+                    card.style.transition = 'none';
+                }
+
+                function handleMouseLeave() {
+                    if (window.orientationActive) return;
+                    card.style.transition = 'transform 0.4s ease-out';
+                    card.style.transform = 'rotateX(0deg) rotateY(0deg)';
+                }
+
+                perspectiveDiv.addEventListener('mousemove', handleMouseMove);
+                perspectiveDiv.addEventListener('mouseleave', handleMouseLeave);
+
+                perspectiveDiv.addEventListener('touchmove', function(e) {
+                    if (window.orientationActive) return;
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    const rect = perspectiveDiv.getBoundingClientRect();
+                    const x = touch.clientX - rect.left;
+                    const y = touch.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateY = ((x - centerX) / centerX) * 7;
+                    const rotateX = ((y - centerY) / centerY) * -7;
+                    card.style.transform = 'rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg)';
+                    card.style.transition = 'none';
+                }, { passive: false });
+
+                perspectiveDiv.addEventListener('touchend', function() {
+                    if (window.orientationActive) return;
+                    card.style.transition = 'transform 0.4s ease-out';
+                    card.style.transform = 'rotateX(0deg) rotateY(0deg)';
+                });
+            }
+
+            // ---------- 点击卡片生成诡异气泡（含高亮色） ----------
+            function initClickBubbles() {
+                if (!card) return;
+                const messages = [
+                    '锟斤拷', '烫烫烫', '屯屯屯', '?????', '!!!!!!!!',
+                    '鐧借壊鐨勬亹鎬', '榛戞殫鐨勬繁娓', '鏃犲敖鐨勭棝', '娣辨笂鐨勫懠鍞',
+                    '姝讳骸鐨勮垶', '琛鐨勮蹇', '鐏扮櫧鐨勪笘鐣', '鏃犲敖鐨勯粦鏆',
+                    '■■■■', 'æøå', 'ß∂ƒ©', 'ʎɹɹɐH', 'ǝɯᴉʇ'
+                ];
+                const brightColors = ['#ff3366', '#ffaa00', '#00ffcc', '#ff00ff', '#ff4444', '#66ff33'];
+
+                card.addEventListener('click', function(e) {
+                    const bubble = document.createElement('div');
+                    const msg = messages[Math.floor(Math.random() * messages.length)];
+                    bubble.textContent = msg;
+                    const rect = card.getBoundingClientRect();
+                    bubble.style.position = 'absolute';
+                    bubble.style.left = (e.clientX - rect.left) + 'px';
+                    bubble.style.top = (e.clientY - rect.top) + 'px';
+                    const color = brightColors[Math.floor(Math.random() * brightColors.length)];
+                    bubble.style.color = color;
+                    bubble.style.background = 'rgba(10, 2, 2, 0.85)';
+                    bubble.style.backdropFilter = 'blur(15px)';
+                    bubble.style.borderRadius = '30px';
+                    bubble.style.padding = '8px 22px';
+                    bubble.style.fontSize = '1.4rem';
+                    bubble.style.fontWeight = 'bold';
+                    bubble.style.pointerEvents = 'none';
+                    bubble.style.zIndex = '999';
+                    bubble.style.transform = 'translate(-50%, -50%) scale(0.3)';
+                    bubble.style.opacity = '1';
+                    bubble.style.transition = 'all 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.2)';
+                    bubble.style.boxShadow = '0 0 40px ' + color + '40, 0 10px 30px rgba(0,0,0,0.7)';
+                    bubble.style.whiteSpace = 'nowrap';
+                    bubble.style.border = '2px solid ' + color;
+                    bubble.style.textShadow = '0 0 30px ' + color;
+                    card.appendChild(bubble);
+
+                    requestAnimationFrame(function() {
+                        bubble.style.transform = 'translate(-50%, -180%) scale(1.4)';
+                        bubble.style.opacity = '0';
+                    });
+
+                    bubble.addEventListener('transitionend', function() {
+                        if (bubble.parentNode) bubble.parentNode.removeChild(bubble);
+                    });
+                });
+            }
+
+            // ---------- 滚动提示 ----------
+            function initScrollHint() {
+                const scrollHint = document.getElementById('scrollHint');
+                const videoSection = document.getElementById('videoSection');
+                if (scrollHint && videoSection) {
+                    scrollHint.addEventListener('click', function(e) {
+                        videoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    });
+                }
+            }
+
+            // ---------- 视频自动播放 ----------
+            function initVideoAutoPlay() {
+                const videoContainer = document.getElementById('videoContainer');
+                const videoSection = document.getElementById('videoSection');
+                if (!videoContainer || !videoSection) return;
+
+                let videoLoaded = false;
+
+                const observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting && !videoLoaded) {
+                            videoLoaded = true;
+                            loadVideo();
+                        }
+                    });
+                }, {
+                    threshold: 0.3,
+                    rootMargin: '0px 0px -50px 0px'
+                });
+
+                observer.observe(videoSection);
+
+                function loadVideo() {
+                    const iframe = document.createElement('iframe');
+                    const bvid = 'BV1rdwEzyE4D';
+                    const embedUrl =
+                        'https://player.bilibili.com/player.html?bvid=' + bvid +
+                        '&page=1&high_quality=1&danmaku=0&autoplay=1';
+                    iframe.src = embedUrl;
+                    iframe.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture';
+                    iframe.allowfullscreen = true;
+                    iframe.loading = 'lazy';
+                    iframe.title = '©˙∆ ʎɹɹɐH ǝɯᴉʇ';
+                    videoContainer.appendChild(iframe);
+                }
+
+                document.body.addEventListener('click', function() {
+                    if (!videoLoaded && videoContainer.children.length === 0) {
+                        // 后备
+                    }
+                }, { once: false });
+            }
+
+            // ---------- 启动 ----------
+            createGarbled();
+            createRedDots();
+            initDesktopTilt();
+            initClickBubbles();
+            initScrollHint();
+            initVideoAutoPlay();
+
+            console.log('🩸 鐧借壊鐨勬亹鎬栨父鎴忔棤灏界殑娣辨笂');
+            console.log('🕸️ 鏃犲敖鐨勬繁娓︿腑鐨勫埗浣');
+            console.log('🦇 鏃犲敖鐨勬繁娓︼紝生日快乐！');
+        })();
+    </script>
+</body>
+</html>
